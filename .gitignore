@@ -62,3 +62,6 @@
 
 # IDE
 /.idea/
+
+# Claude
+.claude
