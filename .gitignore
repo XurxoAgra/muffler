@@ -53,3 +53,12 @@
 
 # Docker local environment
 /docker/develop/.env
+
+# Docker volumes (generated runtime data, e.g. postgres data dir)
+/var/data/
+
+# Generated secrets (e.g. JWT/OAuth keypairs)
+/var/oauth/*.key
+
+# IDE
+/.idea/
