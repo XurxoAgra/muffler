@@ -1,0 +1,49 @@
+services:
+    webserver:
+        build:
+            context: ./docker/develop/bin/webserver
+            dockerfile: Dockerfile
+            args:
+                PHP_VERSION: 8.4
+        container_name: '${CONTAINER_SUFFIX}-webserver'
+        env_file:
+            - docker/develop/.env
+        restart: 'always'
+        ports:
+            - "${PORT_HTTP}:80"
+            - "${PORT_HTTPS}:443"
+        links:
+            - postgres
+        environment:
+            - PHP_IDE_CONFIG=serverName=localhost
+            - PHP_VERSION=8.4
+        volumes:
+            - ./:/var/www/html
+            - ./docker/develop/config/php/php.ini:/usr/local/etc/php/php.ini
+            - ./docker/develop/config/vhosts:/etc/apache2/sites-enabled
+            - ./var/log/docker/apache2:/var/log/apache2
+        secrets:
+            - host_ssh_key
+        networks:
+          - muffler-api-network
+    postgres:
+        build:
+            context: ./docker/develop/bin/postgres
+        container_name: '${CONTAINER_SUFFIX}-postgres'
+        restart: 'always'
+        ports:
+            - '${PORT_DATABASE}:5432'
+        volumes:
+            - ./var/data/docker/postgres:/var/lib/postgresql/data
+            - ./var/log/docker/postgres:/var/log/postgresql
+        environment:
+            POSTGRES_USER: '${POSTGRES_USER}'
+            POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'
+            POSTGRES_DB: '${POSTGRES_DB}'
+        networks:
+          - muffler-api-network
+secrets:
+    host_ssh_key:
+        file: ~/.ssh/id_rsa
+networks:
+    muffler-api-network:
