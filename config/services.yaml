@@ -18,6 +18,16 @@ services:
     # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/'
+        exclude:
+            - '../src/Kernel.php'
+            - '../src/**/Domain/'
+            - '../src/**/Http/Request/*Request.php'
+
+    # Bind ports (interfaces) to their infrastructure adapters — autowiring
+    # cannot resolve interfaces on its own.
+    App\Auth\Application\Port\PasswordHasher: '@App\Auth\Infrastructure\Security\SymfonyPasswordHasher'
+    App\Auth\Application\Port\TokenGenerator: '@App\Auth\Infrastructure\Security\LexikTokenGenerator'
+    App\Auth\Domain\User\UserRepository: '@App\Auth\Infrastructure\Persistence\DoctrineUserRepository'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

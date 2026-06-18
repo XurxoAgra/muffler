@@ -9,3 +9,16 @@
 
 controllers:
     resource: routing.controllers
+
+# These two paths are intercepted by Symfony's security firewall (json_login
+# and the refresh-jwt authenticator) before the router would ever dispatch to
+# a controller. The routes only exist so the router doesn't 404 first.
+auth.login:
+    path: /api/auth/login
+    methods: [POST]
+    controller: App\Shared\Infrastructure\Http\UnreachableController
+
+auth.refresh:
+    path: /api/auth/refresh
+    methods: [POST]
+    controller: App\Shared\Infrastructure\Http\UnreachableController

@@ -1,0 +1,50 @@
+security:
+    password_hashers:
+        App\Auth\Infrastructure\Security\SymfonyUserAdapter:
+            algorithm: auto
+
+    providers:
+        users_in_db:
+            id: App\Auth\Infrastructure\Security\UserSymfonyProvider
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        login:
+            pattern: ^/api/auth/login
+            stateless: true
+            json_login:
+                check_path: /api/auth/login
+                username_path: email
+                password_path: password
+                success_handler: App\Auth\Infrastructure\Security\LoginSuccessHandler
+                failure_handler: App\Auth\Infrastructure\Security\LoginFailureHandler
+
+        api:
+            pattern: ^/api
+            stateless: true
+            provider: users_in_db
+            entry_point: jwt
+            jwt: ~
+            refresh-jwt:
+                check_path: /api/auth/refresh
+                success_handler: App\Auth\Infrastructure\Security\RefreshSuccessHandler
+            logout:
+                path: /api/auth/logout
+
+    access_control:
+        - { path: ^/api/auth/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/auth/register, roles: PUBLIC_ACCESS }
+        - { path: ^/api/auth/refresh, roles: PUBLIC_ACCESS }
+        - { path: ^/api, roles: ROLE_USER }
+
+when@test:
+    security:
+        password_hashers:
+            App\Auth\Infrastructure\Security\SymfonyUserAdapter:
+                algorithm: auto
+                cost: 4
+                time_cost: 3
+                memory_cost: 10
