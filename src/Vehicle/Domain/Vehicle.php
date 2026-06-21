@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Vehicle\Domain;
 
+use Symfony\Component\Uid\Uuid;
+
 final class Vehicle
 {
-    private ?int $id = null;
+    private string $id;
 
     private ?string $vin = null;
 
@@ -24,9 +26,10 @@ final class Vehicle
         private string $type,
         private string $ownerId,
     ) {
+        $this->id = Uuid::v7()->toRfc4122();
     }
 
-    public function getId(): ?int
+    public function getId(): string
     {
         return $this->id;
     }

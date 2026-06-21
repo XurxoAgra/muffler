@@ -6,20 +6,22 @@ namespace App\Vehicle\Domain;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Uid\Uuid;
 
 final class VehicleMake
 {
-    private ?int $id = null;
+    private string $id;
 
     /** @var Collection<int, VehicleModel> */
     private Collection $models;
 
     public function __construct(private string $name)
     {
+        $this->id = Uuid::v7()->toRfc4122();
         $this->models = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): string
     {
         return $this->id;
     }

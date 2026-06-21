@@ -9,6 +9,9 @@ use App\Auth\Domain\User\Exception\InvalidEmailException;
 use App\Auth\Domain\User\Exception\UserAlreadyExistsException;
 use App\Auth\Domain\User\Exception\UserNotFoundException;
 use App\Shared\Application\Exception\ValidationException;
+use App\Vehicle\Domain\Exception\VehicleAccessDeniedException;
+use App\Vehicle\Domain\Exception\VehicleMakeNotFoundException;
+use App\Vehicle\Domain\Exception\VehicleNotFoundException;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -22,6 +25,9 @@ final class ExceptionSubscriber
         UserAlreadyExistsException::class => [409, 'EMAIL_TAKEN'],
         UserNotFoundException::class => [404, 'USER_NOT_FOUND'],
         InvalidEmailException::class => [400, 'INVALID_EMAIL'],
+        VehicleNotFoundException::class => [404, 'VEHICLE_NOT_FOUND'],
+        VehicleMakeNotFoundException::class => [404, 'VEHICLE_MAKE_NOT_FOUND'],
+        VehicleAccessDeniedException::class => [403, 'VEHICLE_ACCESS_DENIED'],
     ];
 
     public function __invoke(ExceptionEvent $event): void

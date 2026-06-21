@@ -20,6 +20,49 @@ nelmio_api_doc:
                                 code: { type: string, example: VALIDATION_ERROR }
                                 message: { type: string }
                                 details: { type: object }
+                VehicleCatalogRef:
+                    type: object
+                    nullable: true
+                    properties:
+                        id: { type: string, format: uuid, example: 019eec01-1da5-7718-bb19-1164654bd689 }
+                        name: { type: string, example: Corolla }
+                Vehicle:
+                    type: object
+                    properties:
+                        id: { type: string, format: uuid, example: 019eec01-1e15-7715-9841-572e528a6d80 }
+                        plate: { type: string, example: 1234ABC }
+                        year: { type: integer, example: 2021 }
+                        type: { type: string, example: car }
+                        vin: { type: string, nullable: true, example: 1HGCM82633A123456 }
+                        make: { $ref: '#/components/schemas/VehicleCatalogRef' }
+                        model: { $ref: '#/components/schemas/VehicleCatalogRef' }
+                        custom_make: { type: string, nullable: true, example: null }
+                        custom_model: { type: string, nullable: true, example: null }
+                        role: { type: string, enum: [owner, shared], example: owner }
+                VehicleInput:
+                    type: object
+                    required: [plate, year, type]
+                    description: >
+                        Debe venir el par (makeId, modelId) o el par (customMake, customModel);
+                        ambos pares no pueden estar vacíos a la vez.
+                    properties:
+                        plate: { type: string, example: 1234ABC }
+                        year: { type: integer, example: 2021 }
+                        type: { type: string, example: car }
+                        vin:
+                            type: string
+                            nullable: true
+                            description: 17 caracteres alfanuméricos, sin I, O ni Q
+                            example: 1HGCM82633A123456
+                        makeId: { type: string, format: uuid, nullable: true, example: 019eec01-1d2d-7261-a672-2238b9ba1465 }
+                        modelId: { type: string, format: uuid, nullable: true, example: 019eec01-1da5-7718-bb19-1164654bd689 }
+                        customMake: { type: string, nullable: true, example: null }
+                        customModel: { type: string, nullable: true, example: null }
+                VehicleSummary:
+                    type: object
+                    properties:
+                        id: { type: string, format: uuid, example: 019eec01-1d2d-7261-a672-2238b9ba1465 }
+                        name: { type: string, example: Toyota }
     areas:
         default:
             path_patterns: ['^/api']

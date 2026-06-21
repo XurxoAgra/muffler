@@ -28,6 +28,10 @@ services:
     App\Auth\Application\Port\PasswordHasher: '@App\Auth\Infrastructure\Security\SymfonyPasswordHasher'
     App\Auth\Application\Port\TokenGenerator: '@App\Auth\Infrastructure\Security\LexikTokenGenerator'
     App\Auth\Domain\User\UserRepository: '@App\Auth\Infrastructure\Persistence\DoctrineUserRepository'
+    App\Vehicle\Domain\VehicleRepository: '@App\Vehicle\Infrastructure\Persistence\DoctrineVehicleRepository'
+    App\Vehicle\Domain\VehicleUserRepository: '@App\Vehicle\Infrastructure\Persistence\DoctrineVehicleUserRepository'
+    App\Vehicle\Domain\VehicleMakeRepository: '@App\Vehicle\Infrastructure\Persistence\DoctrineVehicleMakeRepository'
+    App\Vehicle\Domain\VehicleModelRepository: '@App\Vehicle\Infrastructure\Persistence\DoctrineVehicleModelRepository'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

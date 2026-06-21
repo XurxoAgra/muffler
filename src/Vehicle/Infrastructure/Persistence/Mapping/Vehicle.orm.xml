@@ -6,8 +6,8 @@
                     https://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
     <entity name="App\Vehicle\Domain\Vehicle" table="vehicles">
-        <id name="id" type="integer">
-            <generator strategy="AUTO"/>
+        <id name="id" type="string" length="36">
+            <generator strategy="NONE"/>
         </id>
 
         <field name="plate" type="string" length="20"/>
