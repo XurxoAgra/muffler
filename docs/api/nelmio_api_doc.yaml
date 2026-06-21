@@ -1,0 +1,25 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: Muffler API
+            description: API de autenticación (registro, login, refresh, logout y perfil) basada en JWT.
+            version: 1.0.0
+        components:
+            securitySchemes:
+                bearerAuth:
+                    type: http
+                    scheme: bearer
+                    bearerFormat: JWT
+            schemas:
+                ErrorResponse:
+                    type: object
+                    properties:
+                        error:
+                            type: object
+                            properties:
+                                code: { type: string, example: VALIDATION_ERROR }
+                                message: { type: string }
+                                details: { type: object }
+    areas:
+        default:
+            path_patterns: ['^/api']
