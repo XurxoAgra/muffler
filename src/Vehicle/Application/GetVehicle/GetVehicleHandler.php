@@ -26,7 +26,6 @@ final readonly class GetVehicleHandler
             throw new VehicleNotFoundException("Vehicle {$query->vehicleId} not found");
         }
 
-        // TODO: replace with a VehicleVoter (e.g. denyAccessUnlessGranted('VIEW', $vehicle)) once it exists.
         $link = $this->vehicleUsers->findByVehicleAndUser($vehicle->getId(), $query->userId);
 
         if ($link === null) {

@@ -26,7 +26,6 @@ final readonly class DeleteVehicleHandler
             throw new VehicleNotFoundException("Vehicle {$command->vehicleId} not found");
         }
 
-        // TODO: replace with a VehicleVoter (e.g. denyAccessUnlessGranted('DELETE', $vehicle)) once it exists.
         $link = $this->vehicleUsers->findByVehicleAndUser($vehicle->getId(), $command->userId);
 
         if ($link === null || $link->getRole() !== VehicleUserRole::Owner) {

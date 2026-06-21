@@ -16,7 +16,11 @@ use App\Vehicle\Application\ListVehicles\ListVehiclesQuery;
 use App\Vehicle\Application\UpdateVehicle\UpdateVehicleCommand;
 use App\Vehicle\Application\UpdateVehicle\UpdateVehicleHandler;
 use App\Vehicle\Application\VehicleDTO;
+use App\Vehicle\Domain\Exception\VehicleNotFoundException;
+use App\Vehicle\Domain\Vehicle;
+use App\Vehicle\Domain\VehicleRepository;
 use App\Vehicle\Infrastructure\Http\Request\VehicleRequest;
+use App\Vehicle\Infrastructure\Security\VehicleVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -26,6 +30,7 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 final class VehicleController extends AbstractController
 {
     public function __construct(
+        private readonly VehicleRepository $vehicles,
         private readonly ListVehiclesHandler $listVehicles,
         private readonly GetVehicleHandler $getVehicle,
         private readonly CreateVehicleHandler $createVehicle,
@@ -45,6 +50,8 @@ final class VehicleController extends AbstractController
     #[Route('/{id}', name: 'vehicles.get', methods: ['GET'], requirements: ['id' => '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'])]
     public function get(string $id, #[CurrentUser] SymfonyUserAdapter $authUser): JsonResponse
     {
+        $this->denyAccessUnlessGranted(VehicleVoter::VIEW, $this->findVehicleOrFail($id));
+
         $vehicle = $this->getVehicle->handle(new GetVehicleQuery($id, $authUser->userId));
 
         return $this->json($this->serialize($vehicle));
@@ -71,6 +78,8 @@ final class VehicleController extends AbstractController
     #[Route('/{id}', name: 'vehicles.update', methods: ['PUT'], requirements: ['id' => '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'])]
     public function update(string $id, VehicleRequest $request, #[CurrentUser] SymfonyUserAdapter $authUser): JsonResponse
     {
+        $this->denyAccessUnlessGranted(VehicleVoter::EDIT, $this->findVehicleOrFail($id));
+
         $vehicle = $this->updateVehicle->handle(new UpdateVehicleCommand(
             vehicleId: $id,
             userId: $authUser->userId,
@@ -90,9 +99,22 @@ final class VehicleController extends AbstractController
     #[Route('/{id}', name: 'vehicles.delete', methods: ['DELETE'], requirements: ['id' => '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'])]
     public function delete(string $id, #[CurrentUser] SymfonyUserAdapter $authUser): JsonResponse
     {
+        $this->denyAccessUnlessGranted(VehicleVoter::DELETE, $this->findVehicleOrFail($id));
+
         $this->deleteVehicle->handle(new DeleteVehicleCommand($id, $authUser->userId));
 
         return new JsonResponse(null, 204);
+    }
+
+    private function findVehicleOrFail(string $id): Vehicle
+    {
+        $vehicle = $this->vehicles->findById($id);
+
+        if ($vehicle === null) {
+            throw new VehicleNotFoundException("Vehicle {$id} not found");
+        }
+
+        return $vehicle;
     }
 
     private function serialize(VehicleDTO $dto): array

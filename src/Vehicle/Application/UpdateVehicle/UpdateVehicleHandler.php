@@ -28,7 +28,6 @@ final readonly class UpdateVehicleHandler
             throw new VehicleNotFoundException("Vehicle {$command->vehicleId} not found");
         }
 
-        // TODO: replace with a VehicleVoter (e.g. denyAccessUnlessGranted('EDIT', $vehicle)) once it exists.
         $link = $this->vehicleUsers->findByVehicleAndUser($vehicle->getId(), $command->userId);
 
         if ($link === null) {

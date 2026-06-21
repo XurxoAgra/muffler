@@ -15,8 +15,10 @@ use App\Vehicle\Domain\Exception\VehicleNotFoundException;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[AsEventListener(event: KernelEvents::EXCEPTION)]
 final class ExceptionSubscriber
@@ -33,6 +35,17 @@ final class ExceptionSubscriber
     public function __invoke(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
+
+        if ($exception instanceof AccessDeniedException || $exception instanceof AccessDeniedHttpException) {
+            $event->setResponse(new JsonResponse([
+                'error' => [
+                    'code' => 'ACCESS_DENIED',
+                    'message' => 'Access denied',
+                ],
+            ], 403));
+
+            return;
+        }
 
         // Let Symfony handle HTTP exceptions normally (404, 405, etc.)
         if ($exception instanceof HttpExceptionInterface) {
