@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                    https://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Vehicle\Domain\Vehicle" table="vehicles">
+        <id name="id" type="integer">
+            <generator strategy="AUTO"/>
+        </id>
+
+        <field name="plate" type="string" length="20"/>
+        <field name="year" type="smallint"/>
+        <field name="type" type="string" length="50"/>
+        <field name="ownerId" type="string" length="36" column="owner_id"/>
+        <field name="vin" type="string" length="17" column="vin" nullable="true" unique="true"/>
+        <field name="customMake" type="string" length="255" column="custom_make" nullable="true"/>
+        <field name="customModel" type="string" length="255" column="custom_model" nullable="true"/>
+
+        <many-to-one field="make" target-entity="App\Vehicle\Domain\VehicleMake">
+            <join-column name="make_id" referenced-column-name="id" nullable="true"/>
+        </many-to-one>
+
+        <many-to-one field="model" target-entity="App\Vehicle\Domain\VehicleModel">
+            <join-column name="model_id" referenced-column-name="id" nullable="true"/>
+        </many-to-one>
+    </entity>
+</doctrine-mapping>
