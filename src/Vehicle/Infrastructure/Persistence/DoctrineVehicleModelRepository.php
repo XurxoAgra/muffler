@@ -23,4 +23,22 @@ final readonly class DoctrineVehicleModelRepository implements VehicleModelRepos
     {
         return $this->entityManager->find(VehicleModel::class, $id);
     }
+
+    public function findOneByMakeAndName(string $makeId, string $name): ?VehicleModel
+    {
+        return $this->entityManager->createQueryBuilder()
+            ->select('model')
+            ->from(VehicleModel::class, 'model')
+            ->where('model.make = :makeId')
+            ->andWhere('LOWER(model.name) = LOWER(:name)')
+            ->setParameter('makeId', $makeId)
+            ->setParameter('name', $name)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function add(VehicleModel $model): void
+    {
+        $this->entityManager->persist($model);
+    }
 }

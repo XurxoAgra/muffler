@@ -23,4 +23,25 @@ final readonly class DoctrineVehicleMakeRepository implements VehicleMakeReposit
     {
         return $this->entityManager->find(VehicleMake::class, $id);
     }
+
+    public function findOneByName(string $name): ?VehicleMake
+    {
+        return $this->entityManager->createQueryBuilder()
+            ->select('make')
+            ->from(VehicleMake::class, 'make')
+            ->where('LOWER(make.name) = LOWER(:name)')
+            ->setParameter('name', $name)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function add(VehicleMake $make): void
+    {
+        $this->entityManager->persist($make);
+    }
+
+    public function flush(): void
+    {
+        $this->entityManager->flush();
+    }
 }
