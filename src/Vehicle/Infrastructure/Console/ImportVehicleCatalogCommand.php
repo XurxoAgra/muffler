@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 )]
 final class ImportVehicleCatalogCommand extends Command
 {
-    private const DEFAULT_RELATIVE_PATH = '/migrations/import/eculimit_data.json';
+    private const DEFAULT_RELATIVE_PATH = '/migrations/import/make_models_data.json';
 
     public function __construct(
         private readonly VehicleCatalogImporter $importer,
@@ -35,7 +35,7 @@ final class ImportVehicleCatalogCommand extends Command
         $this->addArgument(
             'file',
             InputArgument::OPTIONAL,
-            'Ruta al fichero .json o .csv a importar (por defecto migrations/import/eculimit_data.json)',
+            'Ruta al fichero .json o .csv a importar (por defecto migrations/import/make_models_data.json)',
         );
     }
 
