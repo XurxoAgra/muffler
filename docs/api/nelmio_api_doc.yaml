@@ -63,6 +63,78 @@ nelmio_api_doc:
                     properties:
                         id: { type: string, format: uuid, example: 019eec01-1d2d-7261-a672-2238b9ba1465 }
                         name: { type: string, example: Toyota }
+                MaintenanceRecord:
+                    type: object
+                    properties:
+                        id: { type: string, format: uuid, example: 019eec05-1a22-7b33-9c44-3d4e5f607182 }
+                        vehicleId: { type: string, format: uuid, example: 019eec01-1e15-7715-9841-572e528a6d80 }
+                        invoiceId: { type: string, format: uuid, nullable: true, example: null }
+                        createdById: { type: string, format: uuid, example: 019eec01-1d2d-7261-a672-2238b9ba1465 }
+                        serviceDate: { type: string, format: date, example: 2026-05-01 }
+                        mileage: { type: integer, nullable: true, example: 45000 }
+                        type: { type: string, example: Cambio de ruedas }
+                        notes: { type: string, nullable: true, example: null }
+                        cost: { type: string, nullable: true, example: '120.50' }
+                        shopName: { type: string, nullable: true, example: Taller Pepe }
+                        nextServiceDate: { type: string, format: date, nullable: true, example: null }
+                        verified:
+                            type: boolean
+                            description: >
+                                Denormalizado a partir de la verificación del taller (Fase 3); no se puede
+                                establecer mediante la API de creación/edición manual, siempre es false.
+                            example: false
+                        createdAt: { type: string, format: date-time }
+                MaintenanceRecordInput:
+                    type: object
+                    required: [serviceDate, type]
+                    properties:
+                        serviceDate: { type: string, format: date, example: 2026-05-01 }
+                        type: { type: string, example: Cambio de ruedas }
+                        mileage: { type: integer, nullable: true, example: 45000 }
+                        notes: { type: string, nullable: true, example: null }
+                        cost:
+                            type: string
+                            nullable: true
+                            description: Decimal con hasta 2 posiciones, no admite valores negativos
+                            example: '120.50'
+                        shopName: { type: string, nullable: true, example: Taller Pepe }
+                        nextServiceDate: { type: string, format: date, nullable: true, example: null }
+                        invoiceId:
+                            type: string
+                            format: uuid
+                            nullable: true
+                            description: Debe corresponder a una Invoice existente del mismo vehículo
+                            example: null
+                Invoice:
+                    type: object
+                    properties:
+                        id: { type: string, format: uuid, example: 019eec06-4b21-7d33-9c55-2b3c4d5e6f70 }
+                        vehicleId: { type: string, format: uuid, example: 019eec01-1e15-7715-9841-572e528a6d80 }
+                        uploadedById: { type: string, format: uuid, example: 019eec01-1d2d-7261-a672-2238b9ba1465 }
+                        filePath: { type: string, example: 019eec01-1e15-7715-9841-572e528a6d80/019eec06-4b20-7d33-9c55-2b3c4d5e6f70.png }
+                        amount: { type: string, nullable: true, example: null }
+                        date: { type: string, format: date, nullable: true, example: null }
+                        shopName: { type: string, nullable: true, example: null }
+                        description: { type: string, nullable: true, example: null }
+                        status: { type: string, enum: [pending, verified], example: pending }
+                        createdAt: { type: string, format: date-time }
+                OcrSuggestion:
+                    type: object
+                    description: >
+                        Sugerencia devuelta por el servicio de OCR. En esta fase
+                        App\Maintenance\Infrastructure\Ocr\NullOcrService siempre devuelve todos los
+                        campos a null (stub); la integración real de OCR llega en una fase posterior.
+                    properties:
+                        amount: { type: string, nullable: true, example: null }
+                        date: { type: string, nullable: true, example: null }
+                        shopName: { type: string, nullable: true, example: null }
+                        suggestedType: { type: string, nullable: true, example: null }
+                        suggestedNotes: { type: string, nullable: true, example: null }
+                InvoiceScanResponse:
+                    type: object
+                    properties:
+                        invoice: { $ref: '#/components/schemas/Invoice' }
+                        ocrSuggestion: { $ref: '#/components/schemas/OcrSuggestion' }
     areas:
         default:
             path_patterns: ['^/api']

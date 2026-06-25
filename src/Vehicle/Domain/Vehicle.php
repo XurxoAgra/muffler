@@ -23,7 +23,7 @@ final class Vehicle
     public function __construct(
         private string $plate,
         private int $year,
-        private string $type,
+        private VehicleType $type,
         private string $ownerId,
     ) {
         $this->id = Uuid::v7()->toRfc4122();
@@ -54,12 +54,12 @@ final class Vehicle
         $this->year = $year;
     }
 
-    public function getType(): string
+    public function getType(): VehicleType
     {
         return $this->type;
     }
 
-    public function setType(string $type): void
+    public function setType(VehicleType $type): void
     {
         $this->type = $type;
     }

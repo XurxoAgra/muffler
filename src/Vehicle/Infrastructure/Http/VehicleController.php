@@ -19,6 +19,7 @@ use App\Vehicle\Application\VehicleDTO;
 use App\Vehicle\Domain\Exception\VehicleNotFoundException;
 use App\Vehicle\Domain\Vehicle;
 use App\Vehicle\Domain\VehicleRepository;
+use App\Vehicle\Domain\VehicleType;
 use App\Vehicle\Infrastructure\Http\Request\VehicleRequest;
 use App\Vehicle\Infrastructure\Security\VehicleVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -60,11 +61,17 @@ final class VehicleController extends AbstractController
     #[Route('', name: 'vehicles.create', methods: ['POST'])]
     public function create(VehicleRequest $request, #[CurrentUser] SymfonyUserAdapter $authUser): JsonResponse
     {
+        try {
+            $type = VehicleType::from($request->type);
+        } catch (\ValueError) {
+            return $this->json(['error' => 'Tipo de vehículo no válido'], 400);
+        }
+
         $vehicle = $this->createVehicle->handle(new CreateVehicleCommand(
             userId: $authUser->userId,
             plate: $request->plate,
             year: $request->year,
-            type: $request->type,
+            type: $type,
             vin: $request->vin,
             makeId: $request->makeId,
             modelId: $request->modelId,
@@ -80,12 +87,18 @@ final class VehicleController extends AbstractController
     {
         $this->denyAccessUnlessGranted(VehicleVoter::EDIT, $this->findVehicleOrFail($id));
 
+        try {
+            $type = VehicleType::from($request->type);
+        } catch (\ValueError) {
+            return $this->json(['error' => 'Tipo de vehículo no válido'], 400);
+        }
+
         $vehicle = $this->updateVehicle->handle(new UpdateVehicleCommand(
             vehicleId: $id,
             userId: $authUser->userId,
             plate: $request->plate,
             year: $request->year,
-            type: $request->type,
+            type: $type,
             vin: $request->vin,
             makeId: $request->makeId,
             modelId: $request->modelId,
@@ -123,7 +136,7 @@ final class VehicleController extends AbstractController
             'id' => $dto->id,
             'plate' => $dto->plate,
             'year' => $dto->year,
-            'type' => $dto->type,
+            'type' => $dto->type->value,
             'vin' => $dto->vin,
             'make' => $dto->make,
             'model' => $dto->model,

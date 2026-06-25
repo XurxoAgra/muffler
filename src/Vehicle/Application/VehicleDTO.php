@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Vehicle\Application;
 
 use App\Vehicle\Domain\Vehicle;
+use App\Vehicle\Domain\VehicleType;
 use App\Vehicle\Domain\VehicleUserRole;
 
 final class VehicleDTO
@@ -13,7 +14,7 @@ final class VehicleDTO
         public readonly string $id,
         public readonly string $plate,
         public readonly int $year,
-        public readonly string $type,
+        public readonly VehicleType $type,
         public readonly ?string $vin,
         public readonly ?array $make,
         public readonly ?array $model,

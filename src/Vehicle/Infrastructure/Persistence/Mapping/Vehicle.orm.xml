@@ -12,7 +12,7 @@
 
         <field name="plate" type="string" length="20"/>
         <field name="year" type="smallint"/>
-        <field name="type" type="string" length="50"/>
+        <field name="type" type="string" length="50" enum-type="App\Vehicle\Domain\VehicleType"/>
         <field name="ownerId" type="string" length="36" column="owner_id"/>
         <field name="vin" type="string" length="17" column="vin" nullable="true" unique="true"/>
         <field name="customMake" type="string" length="255" column="custom_make" nullable="true"/>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Vehicle\Infrastructure\Http\Request;
 
 use App\Shared\Application\Exception\ValidationException;
+use App\Vehicle\Domain\VehicleType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -41,7 +42,13 @@ final readonly class VehicleRequest
         $violations = $validator->validate($data, new Assert\Collection([
             'plate' => [new Assert\NotBlank(), new Assert\Length(max: 20)],
             'year' => [new Assert\NotBlank(), new Assert\Type('integer')],
-            'type' => [new Assert\NotBlank(), new Assert\Length(max: 50)],
+            'type' => [
+                new Assert\NotBlank(),
+                new Assert\Choice(
+                    choices: array_column(VehicleType::cases(), 'value'),
+                    message: 'El tipo de vehículo no es válido. Valores permitidos: {{ choices }}.',
+                ),
+            ],
             'vin' => new Assert\Optional([
                 new Assert\Regex(
                     '/^[A-HJ-NPR-Z0-9]{17}$/i',

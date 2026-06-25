@@ -8,6 +8,9 @@ use App\Auth\Domain\Exception\DomainException;
 use App\Auth\Domain\User\Exception\InvalidEmailException;
 use App\Auth\Domain\User\Exception\UserAlreadyExistsException;
 use App\Auth\Domain\User\Exception\UserNotFoundException;
+use App\Maintenance\Domain\Exception\InvoiceNotBelongingToVehicleException;
+use App\Maintenance\Domain\Exception\InvoiceNotFoundException;
+use App\Maintenance\Domain\Exception\MaintenanceRecordNotFoundException;
 use App\Shared\Application\Exception\ValidationException;
 use App\Vehicle\Domain\Exception\VehicleAccessDeniedException;
 use App\Vehicle\Domain\Exception\VehicleMakeNotFoundException;
@@ -30,6 +33,9 @@ final class ExceptionSubscriber
         VehicleNotFoundException::class => [404, 'VEHICLE_NOT_FOUND'],
         VehicleMakeNotFoundException::class => [404, 'VEHICLE_MAKE_NOT_FOUND'],
         VehicleAccessDeniedException::class => [403, 'VEHICLE_ACCESS_DENIED'],
+        MaintenanceRecordNotFoundException::class => [404, 'MAINTENANCE_RECORD_NOT_FOUND'],
+        InvoiceNotFoundException::class => [404, 'INVOICE_NOT_FOUND'],
+        InvoiceNotBelongingToVehicleException::class => [400, 'INVOICE_NOT_BELONGING_TO_VEHICLE'],
     ];
 
     public function __invoke(ExceptionEvent $event): void

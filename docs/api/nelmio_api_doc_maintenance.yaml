@@ -1,0 +1,227 @@
+nelmio_api_doc:
+    documentation:
+        paths:
+            /api/vehicles/{vehicleId}/maintenance-records:
+                get:
+                    tags: [Maintenance]
+                    summary: Lista el historial de mantenimiento de un vehículo
+                    description: Ordenado por fecha de servicio (serviceDate) descendente.
+                    security:
+                        - bearerAuth: []
+                    parameters:
+                        - { name: vehicleId, in: path, required: true, schema: { type: string, format: uuid } }
+                    responses:
+                        '200':
+                            description: Listado de registros de mantenimiento
+                            content:
+                                application/json:
+                                    schema:
+                                        type: array
+                                        items: { $ref: '#/components/schemas/MaintenanceRecord' }
+                        '401':
+                            description: Token JWT ausente o inválido
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '403':
+                            description: El usuario no tiene acceso a este vehículo (sin vínculo VehicleUser)
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '404':
+                            description: El vehículo no existe
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                post:
+                    tags: [Maintenance]
+                    summary: Crea un registro de mantenimiento
+                    description: >
+                        Creación manual, o confirmación de una factura escaneada previamente pasando el
+                        invoiceId devuelto por POST /api/vehicles/{vehicleId}/invoices/scan. El campo
+                        verified no es aceptado por este endpoint, siempre se crea en false.
+                    security:
+                        - bearerAuth: []
+                    parameters:
+                        - { name: vehicleId, in: path, required: true, schema: { type: string, format: uuid } }
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema: { $ref: '#/components/schemas/MaintenanceRecordInput' }
+                    responses:
+                        '201':
+                            description: Registro de mantenimiento creado
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/MaintenanceRecord' }
+                        '400':
+                            description: >
+                                Datos de entrada inválidos (serviceDate, type, mileage, cost, nextServiceDate),
+                                o la invoiceId indicada no existe o no pertenece a este vehículo
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '401':
+                            description: Token JWT ausente o inválido
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '403':
+                            description: El usuario no tiene acceso de edición a este vehículo
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '404':
+                            description: El vehículo no existe
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+            /api/maintenance-records/{id}:
+                get:
+                    tags: [Maintenance]
+                    summary: Detalle de un registro de mantenimiento
+                    security:
+                        - bearerAuth: []
+                    parameters:
+                        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+                    responses:
+                        '200':
+                            description: Registro de mantenimiento encontrado
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/MaintenanceRecord' }
+                        '401':
+                            description: Token JWT ausente o inválido
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '403':
+                            description: El usuario no tiene acceso al vehículo de este registro
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '404':
+                            description: El registro de mantenimiento no existe
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                put:
+                    tags: [Maintenance]
+                    summary: Actualiza un registro de mantenimiento
+                    description: Mismo body que la creación manual; tampoco acepta el campo verified.
+                    security:
+                        - bearerAuth: []
+                    parameters:
+                        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema: { $ref: '#/components/schemas/MaintenanceRecordInput' }
+                    responses:
+                        '200':
+                            description: Registro de mantenimiento actualizado
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/MaintenanceRecord' }
+                        '400':
+                            description: >
+                                Datos de entrada inválidos, o la invoiceId indicada no existe o no pertenece
+                                al vehículo de este registro
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '401':
+                            description: Token JWT ausente o inválido
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '403':
+                            description: El usuario no tiene acceso de edición al vehículo de este registro
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '404':
+                            description: El registro de mantenimiento no existe
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                delete:
+                    tags: [Maintenance]
+                    summary: Elimina un registro de mantenimiento
+                    security:
+                        - bearerAuth: []
+                    parameters:
+                        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+                    responses:
+                        '204':
+                            description: Registro de mantenimiento eliminado
+                        '401':
+                            description: Token JWT ausente o inválido
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '403':
+                            description: El usuario no tiene acceso de edición al vehículo de este registro
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '404':
+                            description: El registro de mantenimiento no existe
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+            /api/vehicles/{vehicleId}/invoices/scan:
+                post:
+                    tags: [Maintenance]
+                    summary: Sube una factura y obtiene una sugerencia OCR
+                    description: >
+                        Guarda el fichero de forma privada (var/storage/invoices/, sin endpoint de
+                        descarga en esta fase) y crea una Invoice en estado pending. No crea ningún
+                        MaintenanceRecord: el usuario debe confirmarlo con un POST a
+                        /api/vehicles/{vehicleId}/maintenance-records pasando el invoiceId devuelto.
+                        El campo ocrSuggestion lo genera App\Maintenance\Infrastructure\Ocr\NullOcrService,
+                        que en esta fase siempre devuelve todos los campos a null (stub).
+                    security:
+                        - bearerAuth: []
+                    parameters:
+                        - { name: vehicleId, in: path, required: true, schema: { type: string, format: uuid } }
+                    requestBody:
+                        required: true
+                        content:
+                            multipart/form-data:
+                                schema:
+                                    type: object
+                                    required: [file]
+                                    properties:
+                                        file:
+                                            type: string
+                                            format: binary
+                                            description: PDF, JPG o PNG, máximo 10 MB
+                    responses:
+                        '201':
+                            description: Factura guardada y sugerencia OCR generada
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/InvoiceScanResponse' }
+                        '400':
+                            description: Fichero ausente, tipo no permitido (solo PDF/JPG/PNG) o tamaño superior a 10 MB
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '401':
+                            description: Token JWT ausente o inválido
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '403':
+                            description: El usuario no tiene acceso de edición a este vehículo
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '404':
+                            description: El vehículo no existe
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
