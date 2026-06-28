@@ -8,12 +8,20 @@ use App\Auth\Domain\Exception\DomainException;
 use App\Auth\Domain\User\Exception\InvalidEmailException;
 use App\Auth\Domain\User\Exception\UserAlreadyExistsException;
 use App\Auth\Domain\User\Exception\UserNotFoundException;
+use App\Maintenance\Domain\Exception\InvoiceNotBelongingToVehicleException;
+use App\Maintenance\Domain\Exception\InvoiceNotFoundException;
+use App\Maintenance\Domain\Exception\MaintenanceRecordNotFoundException;
 use App\Shared\Application\Exception\ValidationException;
+use App\Vehicle\Domain\Exception\VehicleAccessDeniedException;
+use App\Vehicle\Domain\Exception\VehicleMakeNotFoundException;
+use App\Vehicle\Domain\Exception\VehicleNotFoundException;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[AsEventListener(event: KernelEvents::EXCEPTION)]
 final class ExceptionSubscriber
@@ -22,11 +30,28 @@ final class ExceptionSubscriber
         UserAlreadyExistsException::class => [409, 'EMAIL_TAKEN'],
         UserNotFoundException::class => [404, 'USER_NOT_FOUND'],
         InvalidEmailException::class => [400, 'INVALID_EMAIL'],
+        VehicleNotFoundException::class => [404, 'VEHICLE_NOT_FOUND'],
+        VehicleMakeNotFoundException::class => [404, 'VEHICLE_MAKE_NOT_FOUND'],
+        VehicleAccessDeniedException::class => [403, 'VEHICLE_ACCESS_DENIED'],
+        MaintenanceRecordNotFoundException::class => [404, 'MAINTENANCE_RECORD_NOT_FOUND'],
+        InvoiceNotFoundException::class => [404, 'INVOICE_NOT_FOUND'],
+        InvoiceNotBelongingToVehicleException::class => [400, 'INVOICE_NOT_BELONGING_TO_VEHICLE'],
     ];
 
     public function __invoke(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
+
+        if ($exception instanceof AccessDeniedException || $exception instanceof AccessDeniedHttpException) {
+            $event->setResponse(new JsonResponse([
+                'error' => [
+                    'code' => 'ACCESS_DENIED',
+                    'message' => 'Access denied',
+                ],
+            ], 403));
+
+            return;
+        }
 
         // Let Symfony handle HTTP exceptions normally (404, 405, etc.)
         if ($exception instanceof HttpExceptionInterface) {

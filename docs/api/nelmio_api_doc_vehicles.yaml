@@ -1,0 +1,188 @@
+nelmio_api_doc:
+    documentation:
+        paths:
+            /api/vehicles:
+                get:
+                    tags: [Vehicles]
+                    summary: Lista los vehículos del usuario autenticado (propios y compartidos)
+                    security:
+                        - bearerAuth: []
+                    responses:
+                        '200':
+                            description: Listado de vehículos
+                            content:
+                                application/json:
+                                    schema:
+                                        type: array
+                                        items: { $ref: '#/components/schemas/Vehicle' }
+                        '401':
+                            description: Token JWT ausente o inválido
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                post:
+                    tags: [Vehicles]
+                    summary: Crea un vehículo
+                    description: El usuario autenticado se asocia automáticamente como propietario (role=owner).
+                    security:
+                        - bearerAuth: []
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema: { $ref: '#/components/schemas/VehicleInput' }
+                    responses:
+                        '201':
+                            description: Vehículo creado
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/Vehicle' }
+                        '400':
+                            description: Datos de entrada inválidos (vin, makeId/modelId, customMake/customModel)
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '401':
+                            description: Token JWT ausente o inválido
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+            /api/vehicles/{id}:
+                get:
+                    tags: [Vehicles]
+                    summary: Detalle de un vehículo
+                    security:
+                        - bearerAuth: []
+                    parameters:
+                        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+                    responses:
+                        '200':
+                            description: Vehículo encontrado
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/Vehicle' }
+                        '401':
+                            description: Token JWT ausente o inválido
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '403':
+                            description: El usuario no tiene acceso a este vehículo (sin vínculo VehicleUser)
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '404':
+                            description: El vehículo no existe
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                put:
+                    tags: [Vehicles]
+                    summary: Actualiza un vehículo
+                    description: Accesible para cualquier usuario vinculado (owner o shared).
+                    security:
+                        - bearerAuth: []
+                    parameters:
+                        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema: { $ref: '#/components/schemas/VehicleInput' }
+                    responses:
+                        '200':
+                            description: Vehículo actualizado
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/Vehicle' }
+                        '400':
+                            description: Datos de entrada inválidos (vin, makeId/modelId, customMake/customModel)
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '401':
+                            description: Token JWT ausente o inválido
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '403':
+                            description: El usuario no tiene acceso a este vehículo (sin vínculo VehicleUser)
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '404':
+                            description: El vehículo no existe
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                delete:
+                    tags: [Vehicles]
+                    summary: Elimina un vehículo
+                    description: Solo el propietario (role=owner) puede eliminarlo.
+                    security:
+                        - bearerAuth: []
+                    parameters:
+                        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+                    responses:
+                        '204':
+                            description: Vehículo eliminado
+                        '401':
+                            description: Token JWT ausente o inválido
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '403':
+                            description: El usuario no es el propietario del vehículo, o no tiene acceso
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '404':
+                            description: El vehículo no existe
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+            /api/vehicle-makes:
+                get:
+                    tags: [Vehicle Catalog]
+                    summary: Lista todas las marcas del catálogo, ordenadas alfabéticamente
+                    security:
+                        - bearerAuth: []
+                    responses:
+                        '200':
+                            description: Listado de marcas
+                            content:
+                                application/json:
+                                    schema:
+                                        type: array
+                                        items: { $ref: '#/components/schemas/VehicleSummary' }
+                        '401':
+                            description: Token JWT ausente o inválido
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+            /api/vehicle-makes/{id}/models:
+                get:
+                    tags: [Vehicle Catalog]
+                    summary: Lista los modelos de una marca, ordenados alfabéticamente
+                    security:
+                        - bearerAuth: []
+                    parameters:
+                        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+                    responses:
+                        '200':
+                            description: Listado de modelos
+                            content:
+                                application/json:
+                                    schema:
+                                        type: array
+                                        items: { $ref: '#/components/schemas/VehicleSummary' }
+                        '401':
+                            description: Token JWT ausente o inválido
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '404':
+                            description: La marca no existe
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }

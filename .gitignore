@@ -65,6 +65,9 @@
 
 # Claude
 .claude
+
+# Superpowers scratch (subagent-driven-development ledger, task briefs, review packages)
+.superpowers/
 ###> symfony/framework-bundle ###
 .env
 /.env.local

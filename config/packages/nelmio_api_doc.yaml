@@ -1,3 +1,5 @@
 imports:
     - { resource: '../../docs/api/nelmio_api_doc.yaml' }
     - { resource: '../../docs/api/nelmio_api_doc_auth.yaml' }
+    - { resource: '../../docs/api/nelmio_api_doc_vehicles.yaml' }
+    - { resource: '../../docs/api/nelmio_api_doc_maintenance.yaml' }

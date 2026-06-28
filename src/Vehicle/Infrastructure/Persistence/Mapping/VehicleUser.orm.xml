@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                    https://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Vehicle\Domain\VehicleUser" table="vehicle_users">
+        <id name="id" type="string" length="36">
+            <generator strategy="NONE"/>
+        </id>
+
+        <field name="userId" type="string" length="36" column="user_id"/>
+        <field name="role" type="string" length="20" enum-type="App\Vehicle\Domain\VehicleUserRole"/>
+
+        <many-to-one field="vehicle" target-entity="App\Vehicle\Domain\Vehicle">
+            <join-column name="vehicle_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <unique-constraints>
+            <unique-constraint name="uniq_vehicle_users_vehicle_id_user_id" columns="vehicle_id,user_id"/>
+        </unique-constraints>
+    </entity>
+</doctrine-mapping>
