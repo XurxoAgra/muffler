@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Vehicle\Domain;
 
+use App\Vehicle\Domain\Exception\InvalidVehicleException;
 use Symfony\Component\Uid\Uuid;
 
 final class Vehicle
@@ -26,6 +27,14 @@ final class Vehicle
         private VehicleType $type,
         private string $ownerId,
     ) {
+        if ('' === trim($plate) || strlen($plate) < 6) {
+            throw new InvalidVehicleException('La matrícula debe tener al menos 6 caracteres');
+        }
+
+        if ($year < 1900) {
+            throw new InvalidVehicleException('El año no puede ser anterior a 1900');
+        }
+
         $this->id = Uuid::v7()->toRfc4122();
     }
 

@@ -40,8 +40,18 @@ final readonly class VehicleRequest
     private function validate(array $data, ValidatorInterface $validator): void
     {
         $violations = $validator->validate($data, new Assert\Collection([
-            'plate' => [new Assert\NotBlank(), new Assert\Length(max: 20)],
-            'year' => [new Assert\NotBlank(), new Assert\Type('integer')],
+            'plate' => [
+                new Assert\NotBlank(message: 'La matrícula no puede estar vacía'),
+                new Assert\Length(min: 6, minMessage: 'La matrícula debe tener al menos 6 caracteres', max: 20),
+            ],
+            'year' => [
+                new Assert\NotNull(message: 'El año no puede estar vacío'),
+                new Assert\Range(min: 1900, minMessage: 'El año no puede ser anterior a 1900'),
+                new Assert\Range(
+                    max: (int) (new \DateTime('now'))->format('Y'),
+                    maxMessage: 'El año no puede ser posterior al año actual',
+                ),
+            ],
             'type' => [
                 new Assert\NotBlank(),
                 new Assert\Choice(

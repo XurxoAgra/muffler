@@ -65,7 +65,7 @@ final class ExceptionSubscriber
                     'message' => $exception->getMessage(),
                     'details' => $exception->details(),
                 ],
-            ], 400));
+            ], 422));
 
             return;
         }
