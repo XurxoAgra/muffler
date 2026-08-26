@@ -18,7 +18,7 @@ final readonly class GetMaintenanceRecordHandler
     {
         $record = $this->maintenanceRecords->findById($query->maintenanceRecordId);
 
-        if ($record === null) {
+        if (null === $record) {
             throw new MaintenanceRecordNotFoundException("Maintenance record {$query->maintenanceRecordId} not found");
         }
 

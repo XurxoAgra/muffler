@@ -22,13 +22,13 @@ final readonly class DeleteVehicleHandler
     {
         $vehicle = $this->vehicles->findById($command->vehicleId);
 
-        if ($vehicle === null) {
+        if (null === $vehicle) {
             throw new VehicleNotFoundException("Vehicle {$command->vehicleId} not found");
         }
 
         $link = $this->vehicleUsers->findByVehicleAndUser($vehicle->getId(), $command->userId);
 
-        if ($link === null || $link->getRole() !== VehicleUserRole::Owner) {
+        if (null === $link || VehicleUserRole::Owner !== $link->getRole()) {
             throw new VehicleAccessDeniedException("User {$command->userId} cannot delete vehicle {$command->vehicleId}");
         }
 

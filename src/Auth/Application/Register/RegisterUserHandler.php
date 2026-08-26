@@ -17,9 +17,9 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 final readonly class RegisterUserHandler
 {
     public function __construct(
-        private UserRepository           $users,
-        private PasswordHasher           $hasher,
-        private TokenGenerator           $tokens,
+        private UserRepository $users,
+        private PasswordHasher $hasher,
+        private TokenGenerator $tokens,
         private EventDispatcherInterface $dispatcher,
     ) {
     }
@@ -46,7 +46,7 @@ final readonly class RegisterUserHandler
 
     private function guardEmailIsUnique(UserEmail $email): void
     {
-        if ($this->users->findByEmail($email) !== null) {
+        if (null !== $this->users->findByEmail($email)) {
             throw new UserAlreadyExistsException($email);
         }
     }

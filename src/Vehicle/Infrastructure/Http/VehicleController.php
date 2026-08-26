@@ -123,7 +123,7 @@ final class VehicleController extends AbstractController
     {
         $vehicle = $this->vehicles->findById($id);
 
-        if ($vehicle === null) {
+        if (null === $vehicle) {
             throw new VehicleNotFoundException("Vehicle {$id} not found");
         }
 

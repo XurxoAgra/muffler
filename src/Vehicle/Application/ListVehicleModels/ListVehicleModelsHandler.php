@@ -19,7 +19,7 @@ final readonly class ListVehicleModelsHandler
     /** @return VehicleModelDTO[] */
     public function handle(ListVehicleModelsQuery $query): array
     {
-        if ($this->makes->findById($query->makeId) === null) {
+        if (null === $this->makes->findById($query->makeId)) {
             throw new VehicleMakeNotFoundException("Vehicle make {$query->makeId} not found");
         }
 

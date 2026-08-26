@@ -29,7 +29,7 @@ final class User extends AggregateRoot
         string $lastName,
         array $roles = [],
     ): self {
-        if ($roles === []) {
+        if ([] === $roles) {
             $roles = [UserRole::User];
         }
 

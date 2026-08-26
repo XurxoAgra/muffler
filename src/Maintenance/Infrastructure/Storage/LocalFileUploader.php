@@ -26,15 +26,11 @@ final class LocalFileUploader implements FileUploaderInterface
     public function upload(UploadedFile $file, string $vehicleId): string
     {
         if (!in_array($file->getMimeType(), self::ALLOWED_MIME_TYPES, true)) {
-            throw new ValidationException('Invalid input', [
-                'file' => ['Only PDF, JPG and PNG files are allowed'],
-            ]);
+            throw new ValidationException('Invalid input', ['file' => ['Only PDF, JPG and PNG files are allowed']]);
         }
 
         if ($file->getSize() > self::MAX_SIZE_BYTES) {
-            throw new ValidationException('Invalid input', [
-                'file' => ['File exceeds the maximum allowed size of 10 MB'],
-            ]);
+            throw new ValidationException('Invalid input', ['file' => ['File exceeds the maximum allowed size of 10 MB']]);
         }
 
         $targetDirectory = $this->storageDirectory.'/'.$vehicleId;

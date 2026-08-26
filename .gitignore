@@ -63,8 +63,9 @@
 # IDE
 /.idea/
 
-# Claude
-.claude
+# Claude (keep shared rules committed, ignore local-only files)
+.claude/*
+!.claude/rules/
 
 # Superpowers scratch (subagent-driven-development ledger, task briefs, review packages)
 .superpowers/
@@ -81,3 +82,8 @@
 ###> lexik/jwt-authentication-bundle ###
 /config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
+
+###> friendsofphp/php-cs-fixer ###
+/.php-cs-fixer.php
+/.php-cs-fixer.cache
+###< friendsofphp/php-cs-fixer ###

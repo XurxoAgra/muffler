@@ -11,8 +11,8 @@ use App\Shared\Domain\Event\DomainEvent;
 final readonly class UserWasRegistered implements DomainEvent
 {
     public function __construct(
-        public UserId             $userId,
-        public UserEmail          $email,
+        public UserId $userId,
+        public UserEmail $email,
         public \DateTimeImmutable $occurredOn,
     ) {
     }

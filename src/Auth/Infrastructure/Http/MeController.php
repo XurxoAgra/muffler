@@ -16,8 +16,9 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 final class MeController extends AbstractController
 {
     public function __construct(
-        private readonly GetProfileHandler $handler
-    ) {}
+        private readonly GetProfileHandler $handler,
+    ) {
+    }
 
     public function __invoke(#[CurrentUser] SymfonyUserAdapter $authUser): JsonResponse
     {

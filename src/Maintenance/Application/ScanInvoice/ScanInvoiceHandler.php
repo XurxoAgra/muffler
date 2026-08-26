@@ -28,7 +28,7 @@ final readonly class ScanInvoiceHandler
     {
         $vehicle = $this->vehicles->findById($command->vehicleId);
 
-        if ($vehicle === null) {
+        if (null === $vehicle) {
             throw new VehicleNotFoundException("Vehicle {$command->vehicleId} not found");
         }
 

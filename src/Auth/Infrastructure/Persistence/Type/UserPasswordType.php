@@ -19,7 +19,7 @@ final class UserPasswordType extends Type
 
     public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?UserPassword
     {
-        return $value !== null ? UserPassword::fromHash($value) : null;
+        return null !== $value ? UserPassword::fromHash($value) : null;
     }
 
     public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): ?string

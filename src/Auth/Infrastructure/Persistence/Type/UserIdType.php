@@ -19,7 +19,7 @@ final class UserIdType extends Type
 
     public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?UserId
     {
-        return $value !== null ? UserId::fromString($value) : null;
+        return null !== $value ? UserId::fromString($value) : null;
     }
 
     public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): ?string

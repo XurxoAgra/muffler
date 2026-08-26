@@ -11,7 +11,7 @@ final readonly class UserProfileDTO
         public string $email,
         public string $firstName,
         public string $lastName,
-        public array  $roles,
+        public array $roles,
         public string $createdAt,
     ) {
     }

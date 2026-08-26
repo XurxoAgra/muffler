@@ -17,7 +17,7 @@ final readonly class DeleteMaintenanceRecordHandler
     {
         $record = $this->maintenanceRecords->findById($command->maintenanceRecordId);
 
-        if ($record === null) {
+        if (null === $record) {
             throw new MaintenanceRecordNotFoundException("Maintenance record {$command->maintenanceRecordId} not found");
         }
 

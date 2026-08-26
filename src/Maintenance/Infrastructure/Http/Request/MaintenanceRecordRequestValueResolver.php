@@ -17,7 +17,7 @@ final class MaintenanceRecordRequestValueResolver implements ValueResolverInterf
 
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
-        if ($argument->getType() !== MaintenanceRecordRequest::class) {
+        if (MaintenanceRecordRequest::class !== $argument->getType()) {
             return [];
         }
 

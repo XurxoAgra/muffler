@@ -24,22 +24,22 @@ final readonly class VehicleCatalogResolver
         $make = null;
         $model = null;
 
-        if ($makeId !== null) {
+        if (null !== $makeId) {
             $make = $this->makes->findById($makeId);
 
-            if ($make === null) {
+            if (null === $make) {
                 throw new ValidationException('Invalid input', ['makeId' => ['Make not found']]);
             }
         }
 
-        if ($modelId !== null) {
+        if (null !== $modelId) {
             $model = $this->models->findById($modelId);
 
-            if ($model === null) {
+            if (null === $model) {
                 throw new ValidationException('Invalid input', ['modelId' => ['Model not found']]);
             }
 
-            if ($makeId === null || $model->getMake()->getId() !== $makeId) {
+            if (null === $makeId || $model->getMake()->getId() !== $makeId) {
                 throw new ValidationException('Invalid input', ['modelId' => ['Model does not belong to the specified make']]);
             }
         }

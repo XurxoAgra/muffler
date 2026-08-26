@@ -120,7 +120,7 @@ final class MaintenanceRecordController extends AbstractController
     {
         $vehicle = $this->vehicles->findById($id);
 
-        if ($vehicle === null) {
+        if (null === $vehicle) {
             throw new VehicleNotFoundException("Vehicle {$id} not found");
         }
 
@@ -131,7 +131,7 @@ final class MaintenanceRecordController extends AbstractController
     {
         $record = $this->maintenanceRecords->findById($id);
 
-        if ($record === null) {
+        if (null === $record) {
             throw new MaintenanceRecordNotFoundException("Maintenance record {$id} not found");
         }
 

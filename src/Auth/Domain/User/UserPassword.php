@@ -13,7 +13,7 @@ final class UserPassword
 
     public static function fromHash(string $hashedValue): self
     {
-        if ($hashedValue === '') {
+        if ('' === $hashedValue) {
             throw new \InvalidArgumentException('Hashed password cannot be empty');
         }
 

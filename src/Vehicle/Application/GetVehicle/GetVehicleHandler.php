@@ -22,13 +22,13 @@ final readonly class GetVehicleHandler
     {
         $vehicle = $this->vehicles->findById($query->vehicleId);
 
-        if ($vehicle === null) {
+        if (null === $vehicle) {
             throw new VehicleNotFoundException("Vehicle {$query->vehicleId} not found");
         }
 
         $link = $this->vehicleUsers->findByVehicleAndUser($vehicle->getId(), $query->userId);
 
-        if ($link === null) {
+        if (null === $link) {
             throw new VehicleAccessDeniedException("User {$query->userId} has no access to vehicle {$query->vehicleId}");
         }
 

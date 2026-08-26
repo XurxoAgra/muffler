@@ -19,7 +19,7 @@ final class GetProfileHandler
     {
         $user = $this->users->findById(UserId::fromString($query->userId));
 
-        if ($user === null) {
+        if (null === $user) {
             throw new UserNotFoundException("User {$query->userId} not found");
         }
 

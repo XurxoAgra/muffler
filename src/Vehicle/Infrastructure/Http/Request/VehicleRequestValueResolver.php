@@ -17,7 +17,7 @@ final class VehicleRequestValueResolver implements ValueResolverInterface
 
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
-        if ($argument->getType() !== VehicleRequest::class) {
+        if (VehicleRequest::class !== $argument->getType()) {
             return [];
         }
 

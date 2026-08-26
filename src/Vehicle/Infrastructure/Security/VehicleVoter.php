@@ -40,13 +40,13 @@ final class VehicleVoter extends Voter
 
         $link = $this->vehicleUsers->findByVehicleAndUser($vehicle->getId(), $user->userId);
 
-        if ($link === null) {
+        if (null === $link) {
             return false;
         }
 
         return match ($attribute) {
             self::VIEW, self::EDIT => true,
-            self::DELETE => $link->getRole() === VehicleUserRole::Owner,
+            self::DELETE => VehicleUserRole::Owner === $link->getRole(),
             default => false,
         };
     }

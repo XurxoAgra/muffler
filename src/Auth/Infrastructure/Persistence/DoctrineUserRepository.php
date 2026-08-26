@@ -61,7 +61,7 @@ final readonly class DoctrineUserRepository implements UserRepository
             [$id->value()],
         );
 
-        return $user !== false ? $this->hydrate($user) : null;
+        return false !== $user ? $this->hydrate($user) : null;
     }
 
     /**
@@ -75,7 +75,7 @@ final readonly class DoctrineUserRepository implements UserRepository
             [$email->value()],
         );
 
-        return $row !== false ? $this->hydrate($row) : null;
+        return false !== $row ? $this->hydrate($row) : null;
     }
 
     public function nextId(): UserId

@@ -20,7 +20,7 @@ final class UserRolesType extends Type
     /** @return UserRole[] */
     public function convertToPHPValue(mixed $value, AbstractPlatform $platform): array
     {
-        if ($value === null) {
+        if (null === $value) {
             return [];
         }
 

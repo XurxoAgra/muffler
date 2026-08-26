@@ -19,7 +19,7 @@ final class UserEmailType extends Type
 
     public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?UserEmail
     {
-        return $value !== null ? new UserEmail($value) : null;
+        return null !== $value ? new UserEmail($value) : null;
     }
 
     public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): ?string

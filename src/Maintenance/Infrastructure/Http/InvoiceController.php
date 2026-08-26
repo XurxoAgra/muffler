@@ -38,7 +38,7 @@ final class InvoiceController extends AbstractController
 
         $file = $request->files->get('file');
 
-        if ($file === null) {
+        if (null === $file) {
             throw new ValidationException('Invalid input', ['file' => ['A file is required']]);
         }
 
@@ -58,7 +58,7 @@ final class InvoiceController extends AbstractController
     {
         $vehicle = $this->vehicles->findById($id);
 
-        if ($vehicle === null) {
+        if (null === $vehicle) {
             throw new VehicleNotFoundException("Vehicle {$id} not found");
         }
 

@@ -22,7 +22,7 @@ final class UserSymfonyProvider implements UserProviderInterface
     {
         $user = $this->users->findByEmail(new UserEmail($identifier));
 
-        if ($user === null) {
+        if (null === $user) {
             throw new UserNotFoundException("User {$identifier} not found");
         }
 
@@ -46,6 +46,6 @@ final class UserSymfonyProvider implements UserProviderInterface
 
     public function supportsClass(string $class): bool
     {
-        return $class === SymfonyUserAdapter::class;
+        return SymfonyUserAdapter::class === $class;
     }
 }

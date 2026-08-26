@@ -17,7 +17,7 @@ final class RegisterRequestValueResolver implements ValueResolverInterface
 
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
-        if ($argument->getType() !== RegisterRequest::class) {
+        if (RegisterRequest::class !== $argument->getType()) {
             return [];
         }
 

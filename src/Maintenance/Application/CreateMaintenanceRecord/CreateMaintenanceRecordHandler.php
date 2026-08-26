@@ -28,23 +28,21 @@ final readonly class CreateMaintenanceRecordHandler
     {
         $vehicle = $this->vehicles->findById($command->vehicleId);
 
-        if ($vehicle === null) {
+        if (null === $vehicle) {
             throw new VehicleNotFoundException("Vehicle {$command->vehicleId} not found");
         }
 
         $invoice = null;
 
-        if ($command->invoiceId !== null) {
+        if (null !== $command->invoiceId) {
             $invoice = $this->invoices->findById($command->invoiceId);
 
-            if ($invoice === null) {
+            if (null === $invoice) {
                 throw new InvoiceNotFoundException("Invoice {$command->invoiceId} not found");
             }
 
             if ($invoice->getVehicle()->getId() !== $command->vehicleId) {
-                throw new InvoiceNotBelongingToVehicleException(
-                    "Invoice {$command->invoiceId} does not belong to vehicle {$command->vehicleId}",
-                );
+                throw new InvoiceNotBelongingToVehicleException("Invoice {$command->invoiceId} does not belong to vehicle {$command->vehicleId}");
             }
         }
 
