@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 final readonly class MaintenanceRecordRequest
 {
     public \DateTimeImmutable $serviceDate;
-    public string $type;
+    public string $maintenanceRecordTypeId;
     public ?int $mileage;
     public ?string $notes;
     public ?string $cost;
@@ -27,7 +27,7 @@ final readonly class MaintenanceRecordRequest
         $this->validate($data, $validator);
 
         $this->serviceDate = new \DateTimeImmutable($data['serviceDate']);
-        $this->type = trim($data['type']);
+        $this->maintenanceRecordTypeId = trim($data['maintenanceRecordTypeId']);
         $this->mileage = isset($data['mileage']) ? (int) $data['mileage'] : null;
         $this->notes = !empty($data['notes']) ? trim($data['notes']) : null;
         $this->cost = !empty($data['cost']) ? (string) $data['cost'] : null;
@@ -45,7 +45,7 @@ final readonly class MaintenanceRecordRequest
 
         $violations = $validator->validate($data, new Assert\Collection([
             'serviceDate' => [new Assert\NotBlank(), new Assert\Date()],
-            'type' => [new Assert\NotBlank(), new Assert\Length(max: 100)],
+            'maintenanceRecordTypeId' => [new Assert\NotBlank(), new Assert\Uuid()],
             'mileage' => new Assert\Optional([new Assert\Type('integer'), new Assert\PositiveOrZero()]),
             'notes' => new Assert\Optional([new Assert\Type('string')]),
             'cost' => new Assert\Optional([$decimalConstraint]),

@@ -11,7 +11,7 @@ http:
     data: |-
       {
         "serviceDate": "2026-05-02",
-        "type": "Cambio de ruedas y frenos",
+        "maintenanceRecordTypeId": "019eec10-0000-7000-8000-000000000005",
         "cost": "150.00"
       }
   headers:

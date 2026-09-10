@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                    https://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Maintenance\Domain\MaintenanceRecordType" table="maintenance_record_type">
+        <id name="id" type="uuid">
+            <generator strategy="NONE"/>
+        </id>
+
+        <field name="key" type="string" length="50" column="key" unique="true"/>
+        <field name="icon" type="string" length="50" nullable="true"/>
+        <field name="defaultPeriodicityMonths" type="integer" column="default_periodicity_months" nullable="true"/>
+        <field name="defaultPeriodicityKm" type="integer" column="default_periodicity_km" nullable="true"/>
+        <field name="active" type="boolean"/>
+    </entity>
+</doctrine-mapping>

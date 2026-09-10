@@ -72,7 +72,7 @@ nelmio_api_doc:
                         createdById: { type: string, format: uuid, example: 019eec01-1d2d-7261-a672-2238b9ba1465 }
                         serviceDate: { type: string, format: date, example: 2026-05-01 }
                         mileage: { type: integer, nullable: true, example: 45000 }
-                        type: { type: string, example: Cambio de ruedas }
+                        maintenanceRecordTypeId: { type: string, format: uuid, example: 019eec10-0000-7000-8000-000000000004 }
                         notes: { type: string, nullable: true, example: null }
                         cost: { type: string, nullable: true, example: '120.50' }
                         shopName: { type: string, nullable: true, example: Taller Pepe }
@@ -86,10 +86,14 @@ nelmio_api_doc:
                         createdAt: { type: string, format: date-time }
                 MaintenanceRecordInput:
                     type: object
-                    required: [serviceDate, type]
+                    required: [serviceDate, maintenanceRecordTypeId]
                     properties:
                         serviceDate: { type: string, format: date, example: 2026-05-01 }
-                        type: { type: string, example: Cambio de ruedas }
+                        maintenanceRecordTypeId:
+                            type: string
+                            format: uuid
+                            description: Must reference an existing, active MaintenanceRecordType
+                            example: 019eec10-0000-7000-8000-000000000004
                         mileage: { type: integer, nullable: true, example: 45000 }
                         notes: { type: string, nullable: true, example: null }
                         cost:
@@ -105,6 +109,23 @@ nelmio_api_doc:
                             nullable: true
                             description: Debe corresponder a una Invoice existente del mismo vehículo
                             example: null
+                MaintenanceRecordType:
+                    type: object
+                    description: >
+                        Fixed catalog entry. Never carries translated text: the client resolves the
+                        label from `key` (i18n namespace `maintenanceRecordType.*`).
+                    properties:
+                        id: { type: string, format: uuid, example: 019eec10-0000-7000-8000-000000000004 }
+                        key: { type: string, example: tire_change }
+                        icon: { type: string, nullable: true, example: circle-dot }
+                        defaultPeriodicityMonths: { type: integer, nullable: true, example: null }
+                        defaultPeriodicityKm: { type: integer, nullable: true, example: 40000 }
+                        active:
+                            type: boolean
+                            description: >
+                                Inactive entries are still returned so existing records keep resolving
+                                their label; only active ones should be offered when creating a record.
+                            example: true
                 Invoice:
                     type: object
                     properties:

@@ -35,6 +35,7 @@ services:
     App\Vehicle\Application\ImportVehicleCatalog\VehicleCatalogFileReader: '@App\Vehicle\Infrastructure\Import\FileVehicleCatalogReader'
     App\Maintenance\Domain\InvoiceRepository: '@App\Maintenance\Infrastructure\Persistence\DoctrineInvoiceRepository'
     App\Maintenance\Domain\MaintenanceRecordRepository: '@App\Maintenance\Infrastructure\Persistence\DoctrineMaintenanceRecordRepository'
+    App\Maintenance\Domain\MaintenanceRecordTypeRepository: '@App\Maintenance\Infrastructure\Persistence\DoctrineMaintenanceRecordTypeRepository'
     App\Maintenance\Application\Port\UserReferenceProvider: '@App\Maintenance\Infrastructure\Persistence\DoctrineUserReferenceProvider'
     App\Maintenance\Application\Port\FileUploaderInterface: '@App\Maintenance\Infrastructure\Storage\LocalFileUploader'
     App\Maintenance\Application\Port\OcrServiceInterface: '@App\Maintenance\Infrastructure\Ocr\NullOcrService'
