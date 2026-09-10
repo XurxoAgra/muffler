@@ -9,7 +9,7 @@ final class UpdateMaintenanceRecordCommand
     public function __construct(
         public readonly string $maintenanceRecordId,
         public readonly \DateTimeImmutable $serviceDate,
-        public readonly string $type,
+        public readonly string $maintenanceRecordTypeId,
         public readonly ?int $mileage,
         public readonly ?string $notes,
         public readonly ?string $cost,

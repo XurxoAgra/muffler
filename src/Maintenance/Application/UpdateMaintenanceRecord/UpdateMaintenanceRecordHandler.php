@@ -8,14 +8,18 @@ use App\Maintenance\Application\MaintenanceRecordDTO;
 use App\Maintenance\Domain\Exception\InvoiceNotBelongingToVehicleException;
 use App\Maintenance\Domain\Exception\InvoiceNotFoundException;
 use App\Maintenance\Domain\Exception\MaintenanceRecordNotFoundException;
+use App\Maintenance\Domain\Exception\MaintenanceRecordTypeInactiveException;
+use App\Maintenance\Domain\Exception\MaintenanceRecordTypeNotFoundException;
 use App\Maintenance\Domain\InvoiceRepository;
 use App\Maintenance\Domain\MaintenanceRecordRepository;
+use App\Maintenance\Domain\MaintenanceRecordTypeRepository;
 
 final readonly class UpdateMaintenanceRecordHandler
 {
     public function __construct(
         private MaintenanceRecordRepository $maintenanceRecords,
         private InvoiceRepository $invoices,
+        private MaintenanceRecordTypeRepository $maintenanceRecordTypes,
     ) {
     }
 
@@ -25,6 +29,16 @@ final readonly class UpdateMaintenanceRecordHandler
 
         if (null === $record) {
             throw new MaintenanceRecordNotFoundException("Maintenance record {$command->maintenanceRecordId} not found");
+        }
+
+        $type = $this->maintenanceRecordTypes->findById($command->maintenanceRecordTypeId);
+
+        if (null === $type) {
+            throw new MaintenanceRecordTypeNotFoundException("Maintenance record type {$command->maintenanceRecordTypeId} not found");
+        }
+
+        if (!$type->isActive()) {
+            throw new MaintenanceRecordTypeInactiveException("Maintenance record type {$command->maintenanceRecordTypeId} is not active");
         }
 
         $invoice = null;
@@ -42,7 +56,7 @@ final readonly class UpdateMaintenanceRecordHandler
         }
 
         $record->setServiceDate($command->serviceDate);
-        $record->setType($command->type);
+        $record->setMaintenanceRecordType($type);
         $record->setMileage($command->mileage);
         $record->setNotes($command->notes);
         $record->setCost($command->cost);

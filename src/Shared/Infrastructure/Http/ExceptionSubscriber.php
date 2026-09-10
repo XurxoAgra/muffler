@@ -11,6 +11,8 @@ use App\Auth\Domain\User\Exception\UserNotFoundException;
 use App\Maintenance\Domain\Exception\InvoiceNotBelongingToVehicleException;
 use App\Maintenance\Domain\Exception\InvoiceNotFoundException;
 use App\Maintenance\Domain\Exception\MaintenanceRecordNotFoundException;
+use App\Maintenance\Domain\Exception\MaintenanceRecordTypeInactiveException;
+use App\Maintenance\Domain\Exception\MaintenanceRecordTypeNotFoundException;
 use App\Shared\Application\Exception\ValidationException;
 use App\Vehicle\Domain\Exception\VehicleAccessDeniedException;
 use App\Vehicle\Domain\Exception\VehicleMakeNotFoundException;
@@ -36,6 +38,8 @@ final class ExceptionSubscriber
         MaintenanceRecordNotFoundException::class => [404, 'MAINTENANCE_RECORD_NOT_FOUND'],
         InvoiceNotFoundException::class => [404, 'INVOICE_NOT_FOUND'],
         InvoiceNotBelongingToVehicleException::class => [400, 'INVOICE_NOT_BELONGING_TO_VEHICLE'],
+        MaintenanceRecordTypeNotFoundException::class => [404, 'MAINTENANCE_RECORD_TYPE_NOT_FOUND'],
+        MaintenanceRecordTypeInactiveException::class => [400, 'MAINTENANCE_RECORD_TYPE_INACTIVE'],
     ];
 
     public function __invoke(ExceptionEvent $event): void

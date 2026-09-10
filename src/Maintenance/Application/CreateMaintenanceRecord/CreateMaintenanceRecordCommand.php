@@ -10,7 +10,7 @@ final class CreateMaintenanceRecordCommand
         public readonly string $vehicleId,
         public readonly string $userId,
         public readonly \DateTimeImmutable $serviceDate,
-        public readonly string $type,
+        public readonly string $maintenanceRecordTypeId,
         public readonly ?int $mileage,
         public readonly ?string $notes,
         public readonly ?string $cost,

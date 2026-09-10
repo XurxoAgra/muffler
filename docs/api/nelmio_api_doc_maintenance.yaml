@@ -1,6 +1,29 @@
 nelmio_api_doc:
     documentation:
         paths:
+            /api/maintenance-record-types:
+                get:
+                    tags: [Maintenance]
+                    summary: Lists the maintenance record type catalog, ordered by key
+                    description: >
+                        Returns every entry, active and inactive, so existing records can always resolve
+                        their label. Only active entries should be offered when creating a record.
+                        The response never contains translated text: the client resolves the label from key.
+                    security:
+                        - bearerAuth: []
+                    responses:
+                        '200':
+                            description: Listado de tipos de mantenimiento
+                            content:
+                                application/json:
+                                    schema:
+                                        type: array
+                                        items: { $ref: '#/components/schemas/MaintenanceRecordType' }
+                        '401':
+                            description: Token JWT ausente o inválido
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
             /api/vehicles/{vehicleId}/maintenance-records:
                 get:
                     tags: [Maintenance]
@@ -57,8 +80,9 @@ nelmio_api_doc:
                                     schema: { $ref: '#/components/schemas/MaintenanceRecord' }
                         '400':
                             description: >
-                                Datos de entrada inválidos (serviceDate, type, mileage, cost, nextServiceDate),
-                                o la invoiceId indicada no existe o no pertenece a este vehículo
+                                Datos de entrada inválidos (serviceDate, maintenanceRecordTypeId, mileage, cost, nextServiceDate),
+                                la invoiceId indicada no existe o no pertenece a este vehículo, o el
+                                maintenanceRecordTypeId indicado está desactivado (active=false)
                             content:
                                 application/json:
                                     schema: { $ref: '#/components/schemas/ErrorResponse' }
@@ -73,7 +97,7 @@ nelmio_api_doc:
                                 application/json:
                                     schema: { $ref: '#/components/schemas/ErrorResponse' }
                         '404':
-                            description: El vehículo no existe
+                            description: El vehículo no existe, o el maintenanceRecordTypeId indicado no existe
                             content:
                                 application/json:
                                     schema: { $ref: '#/components/schemas/ErrorResponse' }
@@ -127,8 +151,9 @@ nelmio_api_doc:
                                     schema: { $ref: '#/components/schemas/MaintenanceRecord' }
                         '400':
                             description: >
-                                Datos de entrada inválidos, o la invoiceId indicada no existe o no pertenece
-                                al vehículo de este registro
+                                Datos de entrada inválidos, la invoiceId indicada no existe o no pertenece
+                                al vehículo de este registro, o el maintenanceRecordTypeId indicado está
+                                desactivado (active=false)
                             content:
                                 application/json:
                                     schema: { $ref: '#/components/schemas/ErrorResponse' }
@@ -143,7 +168,7 @@ nelmio_api_doc:
                                 application/json:
                                     schema: { $ref: '#/components/schemas/ErrorResponse' }
                         '404':
-                            description: El registro de mantenimiento no existe
+                            description: El registro de mantenimiento no existe, o el maintenanceRecordTypeId indicado no existe
                             content:
                                 application/json:
                                     schema: { $ref: '#/components/schemas/ErrorResponse' }

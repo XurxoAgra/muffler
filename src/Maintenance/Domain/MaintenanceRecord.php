@@ -30,7 +30,7 @@ final class MaintenanceRecord
         private Vehicle $vehicle,
         private User $createdBy,
         private \DateTimeImmutable $serviceDate,
-        private string $type,
+        private MaintenanceRecordType $maintenanceRecordType,
         private ?Invoice $invoice = null,
     ) {
         $this->id = Uuid::v7();
@@ -82,14 +82,14 @@ final class MaintenanceRecord
         $this->mileage = $mileage;
     }
 
-    public function getType(): string
+    public function getMaintenanceRecordType(): MaintenanceRecordType
     {
-        return $this->type;
+        return $this->maintenanceRecordType;
     }
 
-    public function setType(string $type): void
+    public function setMaintenanceRecordType(MaintenanceRecordType $maintenanceRecordType): void
     {
-        $this->type = $type;
+        $this->maintenanceRecordType = $maintenanceRecordType;
     }
 
     public function getNotes(): ?string

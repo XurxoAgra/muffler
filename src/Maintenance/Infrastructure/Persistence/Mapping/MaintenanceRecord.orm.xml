@@ -12,7 +12,6 @@
 
         <field name="serviceDate" type="date_immutable" column="service_date"/>
         <field name="mileage" type="integer" nullable="true"/>
-        <field name="type" type="string" length="100"/>
         <field name="notes" type="text" nullable="true"/>
         <field name="cost" type="decimal" precision="10" scale="2" nullable="true"/>
         <field name="shopName" type="string" length="255" column="shop_name" nullable="true"/>
@@ -22,6 +21,10 @@
 
         <many-to-one field="vehicle" target-entity="App\Vehicle\Domain\Vehicle">
             <join-column name="vehicle_id" referenced-column-name="id" nullable="false"/>
+        </many-to-one>
+
+        <many-to-one field="maintenanceRecordType" target-entity="App\Maintenance\Domain\MaintenanceRecordType">
+            <join-column name="maintenance_record_type_id" referenced-column-name="id" nullable="false"/>
         </many-to-one>
 
         <many-to-one field="invoice" target-entity="App\Maintenance\Domain\Invoice">

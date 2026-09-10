@@ -8,9 +8,12 @@ use App\Maintenance\Application\MaintenanceRecordDTO;
 use App\Maintenance\Application\Port\UserReferenceProvider;
 use App\Maintenance\Domain\Exception\InvoiceNotBelongingToVehicleException;
 use App\Maintenance\Domain\Exception\InvoiceNotFoundException;
+use App\Maintenance\Domain\Exception\MaintenanceRecordTypeInactiveException;
+use App\Maintenance\Domain\Exception\MaintenanceRecordTypeNotFoundException;
 use App\Maintenance\Domain\InvoiceRepository;
 use App\Maintenance\Domain\MaintenanceRecord;
 use App\Maintenance\Domain\MaintenanceRecordRepository;
+use App\Maintenance\Domain\MaintenanceRecordTypeRepository;
 use App\Vehicle\Domain\Exception\VehicleNotFoundException;
 use App\Vehicle\Domain\VehicleRepository;
 
@@ -20,6 +23,7 @@ final readonly class CreateMaintenanceRecordHandler
         private VehicleRepository $vehicles,
         private InvoiceRepository $invoices,
         private MaintenanceRecordRepository $maintenanceRecords,
+        private MaintenanceRecordTypeRepository $maintenanceRecordTypes,
         private UserReferenceProvider $userReferences,
     ) {
     }
@@ -30,6 +34,16 @@ final readonly class CreateMaintenanceRecordHandler
 
         if (null === $vehicle) {
             throw new VehicleNotFoundException("Vehicle {$command->vehicleId} not found");
+        }
+
+        $type = $this->maintenanceRecordTypes->findById($command->maintenanceRecordTypeId);
+
+        if (null === $type) {
+            throw new MaintenanceRecordTypeNotFoundException("Maintenance record type {$command->maintenanceRecordTypeId} not found");
+        }
+
+        if (!$type->isActive()) {
+            throw new MaintenanceRecordTypeInactiveException("Maintenance record type {$command->maintenanceRecordTypeId} is not active");
         }
 
         $invoice = null;
@@ -50,7 +64,7 @@ final readonly class CreateMaintenanceRecordHandler
             vehicle: $vehicle,
             createdBy: $this->userReferences->reference($command->userId),
             serviceDate: $command->serviceDate,
-            type: $command->type,
+            maintenanceRecordType: $type,
             invoice: $invoice,
         );
         $record->setMileage($command->mileage);
