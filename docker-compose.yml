@@ -34,7 +34,7 @@ services:
         ports:
             - '${PORT_DATABASE}:5432'
         volumes:
-            - ./var/data/docker/postgres:/var/lib/postgresql/data
+            - postgres_data:/var/lib/postgresql/data
             - ./var/log/docker/postgres:/var/log/postgresql
         environment:
             POSTGRES_USER: '${POSTGRES_USER}'
@@ -42,6 +42,8 @@ services:
             POSTGRES_DB: '${POSTGRES_DB}'
         networks:
           - muffler-api-network
+volumes:
+    postgres_data:
 secrets:
     host_ssh_key:
         file: ~/.ssh/id_rsa

@@ -59,7 +59,7 @@ create-db/test:
 
 migrate: migrate/dev migrate/test
 migrate/dev:
-	docker exec $(docker-container) php bin/console doctrine:migrations:migrate --env=dev
+	docker exec $(docker-container) php bin/console doctrine:migrations:migrate
 
 migrate/test:
 	docker exec $(docker-container) php bin/console doctrine:migrations:migrate --env=test
