@@ -32,6 +32,7 @@ services:
     App\Vehicle\Domain\VehicleUserRepository: '@App\Vehicle\Infrastructure\Persistence\DoctrineVehicleUserRepository'
     App\Vehicle\Domain\VehicleMakeRepository: '@App\Vehicle\Infrastructure\Persistence\DoctrineVehicleMakeRepository'
     App\Vehicle\Domain\VehicleModelRepository: '@App\Vehicle\Infrastructure\Persistence\DoctrineVehicleModelRepository'
+    App\Vehicle\Domain\MileageRecordRepository: '@App\Vehicle\Infrastructure\Persistence\DoctrineMileageRecordRepository'
     App\Vehicle\Application\ImportVehicleCatalog\VehicleCatalogFileReader: '@App\Vehicle\Infrastructure\Import\FileVehicleCatalogReader'
     App\Maintenance\Domain\InvoiceRepository: '@App\Maintenance\Infrastructure\Persistence\DoctrineInvoiceRepository'
     App\Maintenance\Domain\MaintenanceRecordRepository: '@App\Maintenance\Infrastructure\Persistence\DoctrineMaintenanceRecordRepository'

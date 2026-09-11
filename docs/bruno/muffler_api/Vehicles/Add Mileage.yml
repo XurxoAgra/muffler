@@ -1,0 +1,23 @@
+info:
+  name: Add Mileage
+  type: http
+  seq: 7
+
+http:
+  method: POST
+  url: http://localhost:85/api/vehicles/019eec01-1e15-7715-9841-572e528a6d80/mileage-records
+  body:
+    type: json
+    data: |-
+      {
+        "mileage": 45000,
+        "recordedAt": "2026-05-01T10:30:00+00:00"
+      }
+  auth:
+    type: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

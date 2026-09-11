@@ -14,6 +14,8 @@ use App\Maintenance\Domain\Exception\MaintenanceRecordNotFoundException;
 use App\Maintenance\Domain\Exception\MaintenanceRecordTypeInactiveException;
 use App\Maintenance\Domain\Exception\MaintenanceRecordTypeNotFoundException;
 use App\Shared\Application\Exception\ValidationException;
+use App\Vehicle\Domain\Exception\InvalidMileageException;
+use App\Vehicle\Domain\Exception\MileageRegressionException;
 use App\Vehicle\Domain\Exception\VehicleAccessDeniedException;
 use App\Vehicle\Domain\Exception\VehicleMakeNotFoundException;
 use App\Vehicle\Domain\Exception\VehicleNotFoundException;
@@ -35,6 +37,8 @@ final class ExceptionSubscriber
         VehicleNotFoundException::class => [404, 'VEHICLE_NOT_FOUND'],
         VehicleMakeNotFoundException::class => [404, 'VEHICLE_MAKE_NOT_FOUND'],
         VehicleAccessDeniedException::class => [403, 'VEHICLE_ACCESS_DENIED'],
+        InvalidMileageException::class => [400, 'INVALID_MILEAGE'],
+        MileageRegressionException::class => [409, 'MILEAGE_REGRESSION'],
         MaintenanceRecordNotFoundException::class => [404, 'MAINTENANCE_RECORD_NOT_FOUND'],
         InvoiceNotFoundException::class => [404, 'INVOICE_NOT_FOUND'],
         InvoiceNotBelongingToVehicleException::class => [400, 'INVOICE_NOT_BELONGING_TO_VEHICLE'],

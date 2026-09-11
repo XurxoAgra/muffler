@@ -1,0 +1,16 @@
+info:
+  name: Mileage History
+  type: http
+  seq: 6
+
+http:
+  method: GET
+  url: http://localhost:85/api/vehicles/019eec01-1e15-7715-9841-572e528a6d80/mileage-records
+  auth:
+    type: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

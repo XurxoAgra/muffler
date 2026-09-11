@@ -63,6 +63,36 @@ nelmio_api_doc:
                     properties:
                         id: { type: string, format: uuid, example: 019eec01-1d2d-7261-a672-2238b9ba1465 }
                         name: { type: string, example: Toyota }
+                MileageRecord:
+                    type: object
+                    properties:
+                        id: { type: string, format: uuid, example: 019eec07-2c33-7a44-8d55-4e5f60718293 }
+                        vehicleId: { type: string, format: uuid, example: 019eec01-1e15-7715-9841-572e528a6d80 }
+                        mileage: { type: integer, example: 45000 }
+                        recordedAt: { type: string, format: date-time, example: '2026-05-01T10:30:00+00:00' }
+                        source:
+                            type: string
+                            enum: [manual, maintenance_record]
+                            description: >
+                                manual for a snapshot entered by the user, maintenance_record for one
+                                derived from the mileage of a maintenance record.
+                            example: manual
+                MileageRecordInput:
+                    type: object
+                    required: [mileage]
+                    properties:
+                        mileage:
+                            type: integer
+                            description: >
+                                Cannot be negative, and cannot be lower than the latest snapshot of the
+                                vehicle; the odometer only moves forward.
+                            example: 45000
+                        recordedAt:
+                            type: string
+                            format: date-time
+                            nullable: true
+                            description: ISO-8601 date-time. Defaults to the current time when omitted.
+                            example: '2026-05-01T10:30:00+00:00'
                 MaintenanceRecord:
                     type: object
                     properties:

@@ -15,6 +15,10 @@ use App\Maintenance\Domain\MaintenanceRecord;
 use App\Maintenance\Domain\MaintenanceRecordRepository;
 use App\Maintenance\Domain\MaintenanceRecordTypeRepository;
 use App\Vehicle\Domain\Exception\VehicleNotFoundException;
+use App\Vehicle\Domain\MileageRecord;
+use App\Vehicle\Domain\MileageRecordRepository;
+use App\Vehicle\Domain\MileageSource;
+use App\Vehicle\Domain\Vehicle;
 use App\Vehicle\Domain\VehicleRepository;
 
 final readonly class CreateMaintenanceRecordHandler
@@ -25,6 +29,7 @@ final readonly class CreateMaintenanceRecordHandler
         private MaintenanceRecordRepository $maintenanceRecords,
         private MaintenanceRecordTypeRepository $maintenanceRecordTypes,
         private UserReferenceProvider $userReferences,
+        private MileageRecordRepository $mileageRecords,
     ) {
     }
 
@@ -75,6 +80,37 @@ final readonly class CreateMaintenanceRecordHandler
 
         $this->maintenanceRecords->save($record);
 
+        $this->recordMileageSnapshot($vehicle, $command->mileage, $command->serviceDate);
+
         return MaintenanceRecordDTO::fromMaintenanceRecord($record);
+    }
+
+    /**
+     * Feeds the Vehicle mileage history from a maintenance record. Vehicle exposes the write
+     * as a port, so this context calls it directly instead of publishing a domain event: the
+     * project has no event bus yet, and this handler already depends on VehicleRepository.
+     *
+     * Only readings that move the odometer forward are snapshotted; a lower or equal mileage
+     * is ignored rather than rejected, so back-dated maintenance records stay creatable.
+     */
+    private function recordMileageSnapshot(Vehicle $vehicle, ?int $mileage, \DateTimeImmutable $serviceDate): void
+    {
+        if (null === $mileage) {
+            return;
+        }
+
+        $latest = $this->mileageRecords->findLatestByVehicle($vehicle->getId());
+
+        if (null !== $latest && $mileage <= $latest->getMileage()) {
+            return;
+        }
+
+        $this->mileageRecords->save(MileageRecord::record(
+            vehicle: $vehicle,
+            mileage: $mileage,
+            recordedAt: $serviceDate,
+            source: MileageSource::MaintenanceRecord,
+            previous: $latest,
+        ));
     }
 }

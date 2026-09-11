@@ -141,6 +141,90 @@ nelmio_api_doc:
                             content:
                                 application/json:
                                     schema: { $ref: '#/components/schemas/ErrorResponse' }
+            /api/vehicles/{vehicleId}/mileage-records:
+                get:
+                    tags: [Vehicles]
+                    summary: Lists the odometer history of a vehicle
+                    description: Ordered by recordedAt descending.
+                    security:
+                        - bearerAuth: []
+                    parameters:
+                        - { name: vehicleId, in: path, required: true, schema: { type: string, format: uuid } }
+                    responses:
+                        '200':
+                            description: Listado de snapshots de kilometraje
+                            content:
+                                application/json:
+                                    schema:
+                                        type: array
+                                        items: { $ref: '#/components/schemas/MileageRecord' }
+                        '401':
+                            description: Token JWT ausente o inválido
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '403':
+                            description: El usuario no tiene acceso a este vehículo (sin vínculo VehicleUser)
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '404':
+                            description: El vehículo no existe
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                post:
+                    tags: [Vehicles]
+                    summary: Records a manual odometer snapshot
+                    description: >
+                        Snapshots created here always carry source=manual. Snapshots with
+                        source=maintenance_record are created automatically when a maintenance record
+                        is registered with a mileage higher than the latest known one.
+                    security:
+                        - bearerAuth: []
+                    parameters:
+                        - { name: vehicleId, in: path, required: true, schema: { type: string, format: uuid } }
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema: { $ref: '#/components/schemas/MileageRecordInput' }
+                    responses:
+                        '201':
+                            description: Snapshot de kilometraje creado
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/MileageRecord' }
+                        '400':
+                            description: El kilometraje es negativo
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '401':
+                            description: Token JWT ausente o inválido
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '403':
+                            description: El usuario no tiene acceso a este vehículo (sin vínculo VehicleUser)
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '404':
+                            description: El vehículo no existe
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '409':
+                            description: El kilometraje es menor que el último snapshot registrado
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '422':
+                            description: Datos de entrada inválidos (mileage, recordedAt)
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
             /api/vehicle-makes:
                 get:
                     tags: [Vehicle Catalog]
