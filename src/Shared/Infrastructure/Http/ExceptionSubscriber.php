@@ -14,11 +14,15 @@ use App\Maintenance\Domain\Exception\MaintenanceRecordNotFoundException;
 use App\Maintenance\Domain\Exception\MaintenanceRecordTypeInactiveException;
 use App\Maintenance\Domain\Exception\MaintenanceRecordTypeNotFoundException;
 use App\Shared\Application\Exception\ValidationException;
+use App\Vehicle\Domain\Exception\CannotRevokeOwnerException;
 use App\Vehicle\Domain\Exception\InvalidMileageException;
+use App\Vehicle\Domain\Exception\InvitedUserNotFoundException;
 use App\Vehicle\Domain\Exception\MileageRegressionException;
 use App\Vehicle\Domain\Exception\VehicleAccessDeniedException;
 use App\Vehicle\Domain\Exception\VehicleMakeNotFoundException;
 use App\Vehicle\Domain\Exception\VehicleNotFoundException;
+use App\Vehicle\Domain\Exception\VehicleUserAlreadyExistsException;
+use App\Vehicle\Domain\Exception\VehicleUserNotFoundException;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -39,6 +43,10 @@ final class ExceptionSubscriber
         VehicleAccessDeniedException::class => [403, 'VEHICLE_ACCESS_DENIED'],
         InvalidMileageException::class => [400, 'INVALID_MILEAGE'],
         MileageRegressionException::class => [409, 'MILEAGE_REGRESSION'],
+        CannotRevokeOwnerException::class => [400, 'CANNOT_REVOKE_OWNER'],
+        InvitedUserNotFoundException::class => [404, 'INVITED_USER_NOT_FOUND'],
+        VehicleUserAlreadyExistsException::class => [409, 'VEHICLE_USER_ALREADY_EXISTS'],
+        VehicleUserNotFoundException::class => [404, 'VEHICLE_USER_NOT_FOUND'],
         MaintenanceRecordNotFoundException::class => [404, 'MAINTENANCE_RECORD_NOT_FOUND'],
         InvoiceNotFoundException::class => [404, 'INVOICE_NOT_FOUND'],
         InvoiceNotBelongingToVehicleException::class => [400, 'INVOICE_NOT_BELONGING_TO_VEHICLE'],

@@ -20,12 +20,23 @@ final readonly class DoctrineVehicleUserRepository implements VehicleUserReposit
         $this->entityManager->flush();
     }
 
+    public function remove(VehicleUser $vehicleUser): void
+    {
+        $this->entityManager->remove($vehicleUser);
+        $this->entityManager->flush();
+    }
+
     public function findByVehicleAndUser(string $vehicleId, string $userId): ?VehicleUser
     {
         return $this->entityManager->getRepository(VehicleUser::class)->findOneBy([
             'vehicle' => $vehicleId,
             'userId' => $userId,
         ]);
+    }
+
+    public function findByVehicle(string $vehicleId): array
+    {
+        return $this->entityManager->getRepository(VehicleUser::class)->findBy(['vehicle' => $vehicleId]);
     }
 
     public function findByUser(string $userId): array

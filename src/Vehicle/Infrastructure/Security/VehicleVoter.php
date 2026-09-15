@@ -16,6 +16,7 @@ final class VehicleVoter extends Voter
     public const VIEW = 'VIEW';
     public const EDIT = 'EDIT';
     public const DELETE = 'DELETE';
+    public const MANAGE_USERS = 'MANAGE_USERS';
 
     public function __construct(private readonly VehicleUserRepository $vehicleUsers)
     {
@@ -24,7 +25,7 @@ final class VehicleVoter extends Voter
     protected function supports(string $attribute, mixed $subject): bool
     {
         return $subject instanceof Vehicle
-            && in_array($attribute, [self::VIEW, self::EDIT, self::DELETE], true);
+            && in_array($attribute, [self::VIEW, self::EDIT, self::DELETE, self::MANAGE_USERS], true);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -46,7 +47,7 @@ final class VehicleVoter extends Voter
 
         return match ($attribute) {
             self::VIEW, self::EDIT => true,
-            self::DELETE => VehicleUserRole::Owner === $link->getRole(),
+            self::DELETE, self::MANAGE_USERS => VehicleUserRole::Owner === $link->getRole(),
             default => false,
         };
     }

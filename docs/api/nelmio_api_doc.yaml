@@ -63,6 +63,24 @@ nelmio_api_doc:
                     properties:
                         id: { type: string, format: uuid, example: 019eec01-1d2d-7261-a672-2238b9ba1465 }
                         name: { type: string, example: Toyota }
+                VehicleUserSummary:
+                    type: object
+                    properties:
+                        id: { type: string, format: uuid, example: 019eec01-2000-7000-8000-000000000001 }
+                        userId: { type: string, format: uuid, example: 019eec01-1d2d-7261-a672-2238b9ba1465 }
+                        email: { type: string, format: email, example: shared.user@example.com }
+                        firstName: { type: string, example: Jane }
+                        lastName: { type: string, example: Doe }
+                        role: { type: string, enum: [owner, shared], example: shared }
+                InviteUserInput:
+                    type: object
+                    required: [email]
+                    properties:
+                        email:
+                            type: string
+                            format: email
+                            description: Must belong to an already-registered user; there is no pending-invitation flow.
+                            example: shared.user@example.com
                 MileageRecord:
                     type: object
                     properties:

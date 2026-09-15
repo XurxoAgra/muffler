@@ -225,6 +225,115 @@ nelmio_api_doc:
                             content:
                                 application/json:
                                     schema: { $ref: '#/components/schemas/ErrorResponse' }
+            /api/vehicles/{vehicleId}/users:
+                get:
+                    tags: [Vehicles]
+                    summary: Lists the users who have access to a vehicle
+                    description: Includes the owner's own entry.
+                    security:
+                        - bearerAuth: []
+                    parameters:
+                        - { name: vehicleId, in: path, required: true, schema: { type: string, format: uuid } }
+                    responses:
+                        '200':
+                            description: List of users with access
+                            content:
+                                application/json:
+                                    schema:
+                                        type: array
+                                        items: { $ref: '#/components/schemas/VehicleUserSummary' }
+                        '401':
+                            description: Missing or invalid JWT token
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '403':
+                            description: The user has no access to this vehicle
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '404':
+                            description: The vehicle does not exist
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                post:
+                    tags: [Vehicles]
+                    summary: Invites an already-registered user to share a vehicle
+                    description: Only the vehicle owner can invite. The invited user must already be registered; there is no pending-invitation flow.
+                    security:
+                        - bearerAuth: []
+                    parameters:
+                        - { name: vehicleId, in: path, required: true, schema: { type: string, format: uuid } }
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema: { $ref: '#/components/schemas/InviteUserInput' }
+                    responses:
+                        '201':
+                            description: User invited
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/VehicleUserSummary' }
+                        '401':
+                            description: Missing or invalid JWT token
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '403':
+                            description: Only the vehicle owner can invite users
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '404':
+                            description: The vehicle does not exist, or the email does not match a registered user
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '409':
+                            description: The invited user already has access to this vehicle
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '422':
+                            description: Invalid input (email)
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+            /api/vehicles/{vehicleId}/users/{userId}:
+                delete:
+                    tags: [Vehicles]
+                    summary: Revokes a user's access to a vehicle
+                    description: The owner can revoke any shared user; a shared user can revoke themselves. The owner can never be revoked.
+                    security:
+                        - bearerAuth: []
+                    parameters:
+                        - { name: vehicleId, in: path, required: true, schema: { type: string, format: uuid } }
+                        - { name: userId, in: path, required: true, schema: { type: string, format: uuid } }
+                    responses:
+                        '204':
+                            description: Access revoked
+                        '400':
+                            description: The target user is the vehicle's owner and cannot be revoked
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '401':
+                            description: Missing or invalid JWT token
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '403':
+                            description: The user has no access to this vehicle, or is not allowed to revoke this target
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '404':
+                            description: The vehicle does not exist, or the target user has no access to it
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
             /api/vehicle-makes:
                 get:
                     tags: [Vehicle Catalog]
