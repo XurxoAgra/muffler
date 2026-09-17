@@ -9,23 +9,29 @@ use App\Maintenance\Application\CreateMaintenanceRecord\CreateMaintenanceRecordC
 use App\Maintenance\Application\CreateMaintenanceRecord\CreateMaintenanceRecordHandler;
 use App\Maintenance\Application\DeleteMaintenanceRecord\DeleteMaintenanceRecordCommand;
 use App\Maintenance\Application\DeleteMaintenanceRecord\DeleteMaintenanceRecordHandler;
+use App\Maintenance\Application\ExportVehicleMaintenance\ExportVehicleMaintenanceHandler;
+use App\Maintenance\Application\ExportVehicleMaintenance\ExportVehicleMaintenanceQuery;
 use App\Maintenance\Application\GetMaintenanceRecord\GetMaintenanceRecordHandler;
 use App\Maintenance\Application\GetMaintenanceRecord\GetMaintenanceRecordQuery;
 use App\Maintenance\Application\ListMaintenanceRecords\ListMaintenanceRecordsHandler;
 use App\Maintenance\Application\ListMaintenanceRecords\ListMaintenanceRecordsQuery;
 use App\Maintenance\Application\MaintenanceRecordDTO;
+use App\Maintenance\Application\Port\ExportFormat;
 use App\Maintenance\Application\UpdateMaintenanceRecord\UpdateMaintenanceRecordCommand;
 use App\Maintenance\Application\UpdateMaintenanceRecord\UpdateMaintenanceRecordHandler;
 use App\Maintenance\Domain\Exception\MaintenanceRecordNotFoundException;
 use App\Maintenance\Domain\MaintenanceRecord;
 use App\Maintenance\Domain\MaintenanceRecordRepository;
+use App\Maintenance\Infrastructure\Http\Request\ExportMaintenanceRecordsRequest;
 use App\Maintenance\Infrastructure\Http\Request\MaintenanceRecordRequest;
 use App\Vehicle\Domain\Exception\VehicleNotFoundException;
 use App\Vehicle\Domain\Vehicle;
 use App\Vehicle\Domain\VehicleRepository;
 use App\Vehicle\Infrastructure\Security\VehicleVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
@@ -42,6 +48,7 @@ final class MaintenanceRecordController extends AbstractController
         private readonly CreateMaintenanceRecordHandler $createMaintenanceRecord,
         private readonly UpdateMaintenanceRecordHandler $updateMaintenanceRecord,
         private readonly DeleteMaintenanceRecordHandler $deleteMaintenanceRecord,
+        private readonly ExportVehicleMaintenanceHandler $exportVehicleMaintenance,
     ) {
     }
 
@@ -53,6 +60,34 @@ final class MaintenanceRecordController extends AbstractController
         $records = $this->listMaintenanceRecords->handle(new ListMaintenanceRecordsQuery($vehicleId));
 
         return $this->json(array_map($this->serialize(...), $records));
+    }
+
+    #[Route('/vehicles/{vehicleId}/maintenance-records/export', name: 'maintenance_records.export', methods: ['GET'], requirements: ['vehicleId' => self::UUID_REQUIREMENT])]
+    public function export(string $vehicleId, ExportMaintenanceRecordsRequest $request): Response
+    {
+        $this->denyAccessUnlessGranted(VehicleVoter::VIEW, $this->findVehicleOrFail($vehicleId));
+
+        $format = ExportFormat::tryFrom($request->format);
+
+        if (null === $format) {
+            return $this->json([
+                'error' => [
+                    'code' => 'INVALID_EXPORT_FORMAT',
+                    'message' => 'Format must be one of: '.implode(', ', array_column(ExportFormat::cases(), 'value')),
+                ],
+            ], 400);
+        }
+
+        $export = $this->exportVehicleMaintenance->handle(new ExportVehicleMaintenanceQuery(
+            vehicleId: $vehicleId,
+            format: $format,
+            typeLabels: $request->labels,
+        ));
+
+        return new Response($export->content, 200, [
+            'Content-Type' => $export->mimeType,
+            'Content-Disposition' => HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, $export->filename),
+        ]);
     }
 
     #[Route('/maintenance-records/{id}', name: 'maintenance_records.get', methods: ['GET'], requirements: ['id' => self::UUID_REQUIREMENT])]

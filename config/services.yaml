@@ -41,6 +41,8 @@ services:
     App\Maintenance\Application\Port\UserReferenceProvider: '@App\Maintenance\Infrastructure\Persistence\DoctrineUserReferenceProvider'
     App\Maintenance\Application\Port\FileUploaderInterface: '@App\Maintenance\Infrastructure\Storage\LocalFileUploader'
     App\Maintenance\Application\Port\OcrServiceInterface: '@App\Maintenance\Infrastructure\Ocr\NullOcrService'
+    App\Maintenance\Application\Port\VehicleFinder: '@App\Maintenance\Infrastructure\Persistence\DoctrineVehicleFinder'
+    App\Maintenance\Application\Port\MaintenanceExportRendererInterface: '@App\Maintenance\Infrastructure\Export\DispatchingMaintenanceExportRenderer'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

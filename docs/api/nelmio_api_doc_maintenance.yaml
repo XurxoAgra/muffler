@@ -101,6 +101,70 @@ nelmio_api_doc:
                             content:
                                 application/json:
                                     schema: { $ref: '#/components/schemas/ErrorResponse' }
+            /api/vehicles/{vehicleId}/maintenance-records/export:
+                get:
+                    tags: [Maintenance]
+                    summary: Exports a vehicle's maintenance history as a PDF or CSV file
+                    description: >
+                        Downloads every maintenance record of the vehicle, most recent serviceDate first, with the
+                        vehicle's plate, make/model, year and VIN (when set) as document header. The PDF also
+                        includes the record count and total cost; the CSV starts with the vehicle data as key/value
+                        rows, then an empty row, then the records table. Anyone who can view the vehicle can export it.
+                        Record types are stored as keys and the backend holds no translations: send
+                        labels[<key>]=<text> for every type the document should print as readable text. Types
+                        without a label fall back to the raw key. Column headers are always in English.
+                    security:
+                        - bearerAuth: []
+                    parameters:
+                        - { name: vehicleId, in: path, required: true, schema: { type: string, format: uuid } }
+                        - { name: format, in: query, required: true, schema: { type: string, enum: [pdf, csv] } }
+                        - name: labels
+                          in: query
+                          required: false
+                          style: deepObject
+                          explode: true
+                          description: Maintenance record type key => display label, e.g. labels[oil_change]=Oil change
+                          schema:
+                              type: object
+                              additionalProperties: { type: string, maxLength: 100 }
+                              example: { oil_change: Oil change, itv: Vehicle inspection }
+                    responses:
+                        '200':
+                            description: The export file, served as an attachment
+                            headers:
+                                Content-Disposition:
+                                    description: Suggested filename, maintenance-history-<plate>.<format>
+                                    schema: { type: string, example: attachment; filename=maintenance-history-1234ABC.pdf }
+                            content:
+                                application/pdf:
+                                    schema: { type: string, format: binary }
+                                text/csv:
+                                    schema: { type: string }
+                        '400':
+                            description: format is missing or is not pdf or csv (code INVALID_EXPORT_FORMAT)
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '401':
+                            description: Missing or invalid JWT
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '403':
+                            description: The user has no access to this vehicle
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '404':
+                            description: The vehicle does not exist
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '422':
+                            description: labels is not a map of strings of up to 100 characters (code VALIDATION_ERROR)
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
             /api/maintenance-records/{id}:
                 get:
                     tags: [Maintenance]
