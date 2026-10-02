@@ -15,6 +15,7 @@ security:
         login:
             pattern: ^/api/auth/login
             stateless: true
+            user_checker: App\Auth\Infrastructure\Security\VerifiedUserChecker
             json_login:
                 check_path: /api/auth/login
                 username_path: email
@@ -27,6 +28,7 @@ security:
             stateless: true
             provider: users_in_db
             entry_point: jwt
+            user_checker: App\Auth\Infrastructure\Security\VerifiedUserChecker
             jwt: ~
             refresh-jwt:
                 check_path: /api/auth/refresh
@@ -37,6 +39,7 @@ security:
     access_control:
         - { path: ^/api/auth/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/auth/register, roles: PUBLIC_ACCESS }
+        - { path: ^/api/auth/verify-email, roles: PUBLIC_ACCESS }
         - { path: ^/api/auth/refresh, roles: PUBLIC_ACCESS }
         - { path: ^/api/doc, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: ROLE_USER }

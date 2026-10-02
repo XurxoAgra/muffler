@@ -39,6 +39,7 @@ final readonly class DoctrineUserRepository implements UserRepository
             'roles' => json_encode(array_map(fn (UserRole $r) => $r->value, $user->roles())),
             'created_at' => $user->createdAt()->format('Y-m-d H:i:s'),
             'updated_at' => $user->updatedAt()->format('Y-m-d H:i:s'),
+            'verified_at' => $user->verifiedAt()?->format('Y-m-d H:i:s'),
         ];
 
         if ($exists) {
@@ -100,6 +101,7 @@ final readonly class DoctrineUserRepository implements UserRepository
             ),
             createdAt: new \DateTimeImmutable($user['created_at']),
             updatedAt: new \DateTimeImmutable($user['updated_at']),
+            verifiedAt: null !== $user['verified_at'] ? new \DateTimeImmutable($user['verified_at']) : null,
         );
     }
 }

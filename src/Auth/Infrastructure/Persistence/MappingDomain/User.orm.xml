@@ -21,5 +21,6 @@
         <field name="roles" type="user_roles"/>
         <field name="createdAt" type="datetime" column="created_at"/>
         <field name="updatedAt" type="datetime" column="updated_at"/>
+        <field name="verifiedAt" type="datetime" column="verified_at" nullable="true"/>
     </entity>
 </doctrine-mapping>

@@ -16,6 +16,7 @@ final class SymfonyUserAdapter implements UserInterface, PasswordAuthenticatedUs
         private readonly string $password,
         private readonly array $roles,
         public readonly string $userId,
+        public readonly bool $verified,
     ) {
     }
 

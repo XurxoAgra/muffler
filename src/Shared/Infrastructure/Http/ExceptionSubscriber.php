@@ -6,8 +6,10 @@ namespace App\Shared\Infrastructure\Http;
 
 use App\Auth\Domain\Exception\DomainException;
 use App\Auth\Domain\User\Exception\InvalidEmailException;
+use App\Auth\Domain\User\Exception\InvalidVerificationTokenException;
 use App\Auth\Domain\User\Exception\UserAlreadyExistsException;
 use App\Auth\Domain\User\Exception\UserNotFoundException;
+use App\Auth\Domain\User\Exception\VerificationTokenExpiredException;
 use App\Maintenance\Domain\Exception\InvoiceNotBelongingToVehicleException;
 use App\Maintenance\Domain\Exception\InvoiceNotFoundException;
 use App\Maintenance\Domain\Exception\MaintenanceRecordNotFoundException;
@@ -38,6 +40,8 @@ final class ExceptionSubscriber
         UserAlreadyExistsException::class => [409, 'EMAIL_TAKEN'],
         UserNotFoundException::class => [404, 'USER_NOT_FOUND'],
         InvalidEmailException::class => [400, 'INVALID_EMAIL'],
+        InvalidVerificationTokenException::class => [400, 'INVALID_VERIFICATION_TOKEN'],
+        VerificationTokenExpiredException::class => [410, 'VERIFICATION_TOKEN_EXPIRED'],
         VehicleNotFoundException::class => [404, 'VEHICLE_NOT_FOUND'],
         VehicleMakeNotFoundException::class => [404, 'VEHICLE_MAKE_NOT_FOUND'],
         VehicleAccessDeniedException::class => [403, 'VEHICLE_ACCESS_DENIED'],

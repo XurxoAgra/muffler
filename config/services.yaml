@@ -27,6 +27,8 @@ services:
     # cannot resolve interfaces on its own.
     App\Auth\Application\Port\PasswordHasher: '@App\Auth\Infrastructure\Security\SymfonyPasswordHasher'
     App\Auth\Application\Port\TokenGenerator: '@App\Auth\Infrastructure\Security\LexikTokenGenerator'
+    App\Auth\Application\Port\VerificationTokenSigner: '@App\Auth\Infrastructure\Security\HmacVerificationTokenSigner'
+    App\Auth\Application\Port\VerificationMailer: '@App\Auth\Infrastructure\Mailer\SymfonyVerificationMailer'
     App\Auth\Domain\User\UserRepository: '@App\Auth\Infrastructure\Persistence\DoctrineUserRepository'
     App\Vehicle\Domain\VehicleRepository: '@App\Vehicle\Infrastructure\Persistence\DoctrineVehicleRepository'
     App\Vehicle\Domain\VehicleUserRepository: '@App\Vehicle\Infrastructure\Persistence\DoctrineVehicleUserRepository'

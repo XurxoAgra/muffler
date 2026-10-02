@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Auth\Domain\User;
 
 use App\Auth\Domain\Event\UserWasRegistered;
+use App\Auth\Domain\Event\UserWasVerified;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 
 final class User extends AggregateRoot
@@ -18,6 +19,7 @@ final class User extends AggregateRoot
         private array $roles,
         private readonly \DateTimeImmutable $createdAt,
         private \DateTimeImmutable $updatedAt,
+        private ?\DateTimeImmutable $verifiedAt = null,
     ) {
     }
 
@@ -50,8 +52,22 @@ final class User extends AggregateRoot
         array $roles,
         \DateTimeImmutable $createdAt,
         \DateTimeImmutable $updatedAt,
+        ?\DateTimeImmutable $verifiedAt,
     ): self {
-        return new self($id, $email, $password, $firstName, $lastName, $roles, $createdAt, $updatedAt);
+        return new self($id, $email, $password, $firstName, $lastName, $roles, $createdAt, $updatedAt, $verifiedAt);
+    }
+
+    public function verify(): void
+    {
+        if ($this->isVerified()) {
+            return;
+        }
+
+        $now = new \DateTimeImmutable();
+        $this->verifiedAt = $now;
+        $this->updatedAt = $now;
+
+        $this->recordEvent(new UserWasVerified($this->id, $now));
     }
 
     public function changeEmail(UserEmail $newEmail): void
@@ -105,6 +121,16 @@ final class User extends AggregateRoot
     public function updatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
+    }
+
+    public function verifiedAt(): ?\DateTimeImmutable
+    {
+        return $this->verifiedAt;
+    }
+
+    public function isVerified(): bool
+    {
+        return null !== $this->verifiedAt;
     }
 
     public function hasRole(UserRole $role): bool
