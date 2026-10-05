@@ -20,7 +20,7 @@ final class RegisterController extends AbstractController
 
     public function __invoke(RegisterRequest $request): JsonResponse
     {
-        $tokens = $this->handler->handle(new RegisterUserCommand(
+        $userId = $this->handler->handle(new RegisterUserCommand(
             email: $request->email,
             rawPassword: $request->password,
             firstName: $request->firstName,
@@ -28,8 +28,9 @@ final class RegisterController extends AbstractController
         ));
 
         return $this->json([
-            'access_token' => $tokens->accessToken,
-            'refresh_token' => $tokens->refreshToken,
+            'id' => $userId,
+            'email' => $request->email,
+            'verification_required' => true,
         ], 201);
     }
 }

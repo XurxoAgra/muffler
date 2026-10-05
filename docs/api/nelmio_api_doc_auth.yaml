@@ -17,16 +17,21 @@ nelmio_api_doc:
                                         password: { type: string, format: password, example: Password1 }
                                         first_name: { type: string, example: Ana }
                                         last_name: { type: string, example: García }
+                    description: >
+                        Creates an unverified account and emails an activation link to the
+                        frontend (`FRONTEND_URL/verify-email?token=...`). No tokens are issued:
+                        login is rejected with `EMAIL_NOT_VERIFIED` until the email is verified.
                     responses:
                         '201':
-                            description: Usuario creado
+                            description: User created, pending email verification
                             content:
                                 application/json:
                                     schema:
                                         type: object
                                         properties:
-                                            access_token: { type: string }
-                                            refresh_token: { type: string }
+                                            id: { type: string, format: uuid }
+                                            email: { type: string, format: email }
+                                            verification_required: { type: boolean, example: true }
                         '400':
                             description: Datos de entrada inválidos (email, contraseña o nombres)
                             content:
@@ -67,6 +72,69 @@ nelmio_api_doc:
                                             refresh_token: { type: string }
                         '401':
                             description: Credenciales inválidas
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '403':
+                            description: Correct credentials, but the email has not been verified (`EMAIL_NOT_VERIFIED`)
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+            /api/auth/verify-email:
+                post:
+                    tags: [Auth]
+                    summary: Activates an account with the token from the verification email
+                    description: >
+                        Idempotent: verifying an already verified account with a valid token returns 204.
+                        The token is invalidated if the user's email changes.
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    required: [token]
+                                    properties:
+                                        token: { type: string }
+                    responses:
+                        '204':
+                            description: Email verified
+                        '400':
+                            description: Malformed or tampered token (`INVALID_VERIFICATION_TOKEN`)
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '410':
+                            description: Token expired (`VERIFICATION_TOKEN_EXPIRED`); request a new one via /api/auth/verify-email/resend
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+                        '422':
+                            description: Missing token
+                            content:
+                                application/json:
+                                    schema: { $ref: '#/components/schemas/ErrorResponse' }
+            /api/auth/verify-email/resend:
+                post:
+                    tags: [Auth]
+                    summary: Sends a new verification email
+                    description: >
+                        Always answers 202, whether or not the email belongs to an unverified
+                        account, so it cannot be used to discover registered emails.
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    required: [email]
+                                    properties:
+                                        email: { type: string, format: email, example: ana@example.com }
+                    responses:
+                        '202':
+                            description: Request accepted
+                        '422':
+                            description: Missing or invalid email
                             content:
                                 application/json:
                                     schema: { $ref: '#/components/schemas/ErrorResponse' }

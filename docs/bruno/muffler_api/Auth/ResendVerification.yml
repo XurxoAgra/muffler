@@ -1,0 +1,21 @@
+info:
+  name: Resend verification email
+  type: http
+  seq: 7
+
+http:
+  method: POST
+  url: http://localhost:85/api/auth/verify-email/resend
+  body:
+    type: json
+    data: |-
+      {
+        "email": "test2@test2.com"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

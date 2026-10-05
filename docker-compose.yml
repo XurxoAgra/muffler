@@ -14,6 +14,7 @@ services:
             - "${PORT_HTTPS}:443"
         links:
             - postgres
+            - mailer
         environment:
             - PHP_IDE_CONFIG=serverName=localhost
             - PHP_VERSION=8.4
@@ -40,6 +41,17 @@ services:
             POSTGRES_USER: '${POSTGRES_USER}'
             POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'
             POSTGRES_DB: '${POSTGRES_DB}'
+        networks:
+          - muffler-api-network
+    mailer:
+        image: axllent/mailpit
+        container_name: '${CONTAINER_SUFFIX}-mailer'
+        restart: 'always'
+        ports:
+            - '${PORT_MAILER_UI:-8025}:8025'
+        environment:
+            MP_SMTP_AUTH_ACCEPT_ANY: 1
+            MP_SMTP_AUTH_ALLOW_INSECURE: 1
         networks:
           - muffler-api-network
 volumes:

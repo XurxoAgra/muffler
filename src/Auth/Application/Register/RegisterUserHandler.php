@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Auth\Application\Register;
 
 use App\Auth\Application\Port\PasswordHasher;
-use App\Auth\Application\Port\TokenGenerator;
-use App\Auth\Domain\Token\TokenPair;
 use App\Auth\Domain\User\Exception\UserAlreadyExistsException;
 use App\Auth\Domain\User\User;
 use App\Auth\Domain\User\UserEmail;
@@ -19,12 +17,13 @@ final readonly class RegisterUserHandler
     public function __construct(
         private UserRepository $users,
         private PasswordHasher $hasher,
-        private TokenGenerator $tokens,
         private EventDispatcherInterface $dispatcher,
     ) {
     }
 
-    public function handle(RegisterUserCommand $command): TokenPair
+    // Returns the new user id. The account stays unverified until the link
+    // emailed by SendVerificationEmailOnRegistration is followed.
+    public function handle(RegisterUserCommand $command): string
     {
         $email = new UserEmail($command->email);
 
@@ -41,7 +40,7 @@ final readonly class RegisterUserHandler
         $this->users->save($user);
         $this->dispatchEvents($user);
 
-        return $this->tokens->generatePair($user);
+        return $user->id()->value();
     }
 
     private function guardEmailIsUnique(UserEmail $email): void

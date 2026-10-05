@@ -36,6 +36,7 @@ final class UserSymfonyProvider implements UserProviderInterface
             password: $user->password()->hashedValue(),
             roles: array_map(fn (UserRole $r) => $r->value, $user->roles()),
             userId: $user->id()->value(),
+            verified: $user->isVerified(),
         );
     }
 
